@@ -1,0 +1,1764 @@
+# Request & Result Log
+
+> Purpose: preserve conversation-level requirements and outcomes so work can continue across sessions.
+
+## Entry Template
+- **Timestamp**: YYYY-MM-DD HH:mm (local)
+- **Request**:
+- **Context/Constraints**:
+- **Actions Taken**:
+- **Result**:
+- **Artifacts/Files**:
+- **Open Items**:
+
+---
+
+## 2026-03-11 00:00 (bootstrap)
+- **Request**: Setup initial project operating model so Codex can support ERP development optimally, including Agents/MCP/Skill automation, with persistent history of requirements and results.
+- **Context/Constraints**:
+  - New repository bootstrap.
+  - Need Vietnamese-friendly operational guide.
+- **Actions Taken**:
+  - Added root `AGENTS.md` with continuity workflow and architecture guardrails.
+  - Added MCP setup template in `.codex/mcp.template.json`.
+  - Added custom skill scaffold for XAF+EF+MAUI delivery in `.codex/skills/erp-xaf-maui-bootstrap/SKILL.md`.
+  - Added automation script `scripts/log-session.sh` to append task outcomes.
+  - Added checklist in `docs/setup-codex-erp.md` and backlog in `docs/continuity/NEXT_STEPS.md`.
+- **Result**: Repository now has a repeatable workflow for Codex setup, traceability, and next-session continuation.
+- **Artifacts/Files**:
+  - `AGENTS.md`
+  - `.codex/mcp.template.json`
+  - `.codex/skills/erp-xaf-maui-bootstrap/SKILL.md`
+  - `scripts/log-session.sh`
+  - `docs/setup-codex-erp.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Bind real MCP servers and verify connectivity.
+  - Create initial solution structure (Domain/Application/Infrastructure/Presentation).
+
+## 2026-03-11 02:29
+- **Request**: Viết file README cho dự án để hướng dẫn dùng Codex để làm việc/code hiệu quả.
+- **Context/Constraints**:
+  - Nội dung cần dễ dùng cho phiên làm việc tiếp theo.
+  - Giữ định hướng ERP stack: XAF + EF Core + MAUI.
+- **Actions Taken**:
+  - Tạo `README.md` tiếng Việt với quy trình vận hành Codex theo từng bước.
+  - Bổ sung mẫu prompt, checklist review output, hướng dẫn MCP, skill automation, và quality rules.
+  - Nêu lộ trình next steps khớp continuity backlog hiện có.
+- **Result**: Có README chính thức để onboarding cách dùng Codex cho dự án này.
+- **Artifacts/Files**:
+  - `README.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Thực thi bước tiếp theo: cấu hình MCP thực tế và verify kết nối.
+
+## 2026-03-11 02:33
+- **Request**: Rà soát xem cấu hình MCP đã có DevExpress MCP chưa và bổ sung theo mẫu `dxdocs` + `dxdocs25_1`.
+- **Context/Constraints**:
+  - Cần bám đúng endpoint user cung cấp.
+  - Tiếp tục duy trì continuity files.
+- **Actions Taken**:
+  - Kiểm tra `.codex/mcp.template.json` và xác nhận trước đó chưa có DevExpress MCP servers.
+  - Bổ sung `dxdocs` và `dxdocs25_1` kiểu `http` vào MCP template.
+  - Cập nhật README phần MCP để phản ánh 2 server mới.
+- **Result**: MCP template hiện đã có server DevExpress docs (latest + v25.1) đúng format user yêu cầu.
+- **Artifacts/Files**:
+  - `.codex/mcp.template.json`
+  - `README.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Verify runtime MCP client có hỗ trợ mixed `command` + `http` server trong cùng file cấu hình.
+
+## 2026-03-11 02:39
+- **Request**: Continue theo backlog, tập trung bước MCP để xác thực dùng được trước khi sang scaffold solution.
+- **Context/Constraints**:
+  - Môi trường hiện tại chưa có `dotnet`.
+  - Network outbound tới DevExpress MCP endpoint bị giới hạn (HTTP CONNECT 403).
+- **Actions Taken**:
+  - Tạo script `scripts/check-mcp-endpoints.sh` để validate toàn bộ server trong `.codex/mcp.template.json` (command availability + HTTP reachability).
+  - Cập nhật `README.md` và `docs/setup-codex-erp.md` với lệnh kiểm tra nhanh MCP.
+  - Chạy script kiểm tra: local `npx` servers pass; DevExpress HTTP endpoints fail do network tunnel 403.
+- **Result**: Có cơ chế kiểm tra MCP tự động để chạy lại ở máy dev thực tế; trạng thái hiện tại bị chặn bởi environment network policy.
+- **Artifacts/Files**:
+  - `scripts/check-mcp-endpoints.sh`
+  - `README.md`
+  - `docs/setup-codex-erp.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Chạy lại `./scripts/check-mcp-endpoints.sh` trên máy dev có network policy phù hợp.
+  - Sau khi MCP pass, tiếp tục dựng skeleton .NET solution.
+
+## 2026-03-11 02:44
+- **Request**: "tôi đã create base Devexpress XAF và MAUI, giờ phải tiếp tục làm gì"
+- **Context/Constraints**:
+  - User xác nhận đã có base solution cho XAF + MAUI.
+  - Cần hướng dẫn hành động tiếp theo theo thứ tự ưu tiên.
+- **Actions Taken**:
+  - Cập nhật `NEXT_STEPS.md` để phản ánh trạng thái mới (đã có base, chuyển sang tích hợp layer + EF baseline + vertical slice đầu tiên).
+  - Bổ sung mục hướng dẫn cụ thể trong `README.md` cho giai đoạn sau khi đã tạo base.
+- **Result**: Có roadmap rõ ràng để tiếp tục triển khai từ base hiện có thay vì tạo lại skeleton.
+- **Artifacts/Files**:
+  - `README.md`
+  - `docs/continuity/NEXT_STEPS.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Bắt đầu task kỹ thuật kế tiếp: dựng EF Core baseline trên solution hiện có.
+
+## 2026-03-11 02:52
+- **Request**: Hỏi còn thiếu bước gì nữa không và đã bắt đầu code chức năng được chưa, hay cần tối ưu thêm.
+- **Context/Constraints**:
+  - User nói đã tạo base DevExpress XAF + MAUI.
+  - Cần câu trả lời theo kiểu go/no-go + checklist tối ưu.
+- **Actions Taken**:
+  - Rà soát file hiện có trong repo và xác nhận hiện repo chủ yếu là docs/scripts, chưa thấy source app/base projects.
+  - Bổ sung mục checklist sẵn sàng coding vào `README.md` để đưa tiêu chí bắt đầu code chức năng.
+  - Cập nhật `NEXT_STEPS.md` để ưu tiên đưa source base vào repo trước các bước kỹ thuật tiếp theo.
+- **Result**: Có tiêu chí rõ ràng để quyết định bắt đầu code ngay hay cần chuẩn bị thêm, cùng roadmap tối ưu hóa theo thứ tự.
+- **Artifacts/Files**:
+  - `README.md`
+  - `docs/continuity/NEXT_STEPS.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Commit/import source XAF + MAUI base vào repo và bắt đầu task EF Core baseline.
+
+## 2026-03-11 02:58
+- **Request**: Hỏi vì sao đang mở repo GitHub ở nhánh `main` nhưng không push code lên được.
+- **Context/Constraints**:
+  - Local repo hiện tại dùng branch `work`.
+  - Trước đó chưa cấu hình remote `origin`.
+- **Actions Taken**:
+  - Kiểm tra branch/local trạng thái và remote.
+  - Thêm remote `origin` trỏ tới `https://github.com/thinhphong68/HERP.git`.
+  - Thử truy cập remote bằng `git ls-remote --heads origin` để xác thực kết nối.
+- **Result**:
+  - Nguyên nhân 1: local đang ở branch `work`, không phải `main`.
+  - Nguyên nhân 2 (chính trong môi trường này): outbound network tới GitHub bị chặn `CONNECT tunnel failed, response 403`, nên không thể push từ đây.
+- **Artifacts/Files**:
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Push từ máy dev của bạn (có network + credential GitHub) bằng `git push -u origin work` hoặc merge/cherry-pick sang `main` rồi push.
+
+## 2026-03-11 03:17
+- **Request**: "cho tải thử 1 file trước xem có được không đã"
+- **Context/Constraints**:
+  - User muốn kiểm tra khả năng download file từ workspace trước khi export toàn bộ.
+- **Actions Taken**:
+  - Tạo file test tại `exports/download-test.txt`.
+  - Chuẩn bị bước kế tiếp để nếu download thành công thì đóng gói archive toàn repo.
+- **Result**: Đã có 1 file mẫu sẵn để user tải thử.
+- **Artifacts/Files**:
+  - `exports/download-test.txt`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - User xác nhận tải được file test, sau đó tạo `HERP-codex-bootstrap.tar.gz`.
+
+## 2026-03-11 03:35
+- **Request**: "hệ thống hiện tại có multi agents chưa, đề xuất các agents cho dự án XAF và MAUI này nếu chưa có"
+- **Context/Constraints**:
+  - Cần đánh giá trạng thái hiện tại của repo và đưa đề xuất khả thi cho stack XAF + EF Core + MAUI.
+  - Duy trì continuity files theo AGENTS.md.
+- **Actions Taken**:
+  - Rà soát cấu trúc repo (README, AGENTS, docs continuity) để xác định chưa có kiến trúc multi-agent runtime trong codebase.
+  - Chuẩn bị đề xuất danh sách agent theo vai trò (architecture, EF/migration, XAF UI, MAUI UI, QA/CI, docs/continuity) và thứ tự triển khai.
+  - Cập nhật backlog ưu tiên để đưa task thiết kế multi-agent vào kế hoạch kế tiếp.
+- **Result**: Xác nhận hiện mới có quy trình làm việc cho một coding agent (Codex) + skill/MCP templates; chưa có hệ multi-agent orchestration thực thi trong repo.
+- **Artifacts/Files**:
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Chốt kiến trúc điều phối multi-agent (event bus/queue + handoff contract).
+  - Chọn 1 pilot flow (ví dụ Supplier) để benchmark hiệu quả multi-agent so với single-agent.
+
+## 2026-03-11 03:41
+- **Request**: "ok, tạo bộ agent cho tôi"
+- **Context/Constraints**:
+  - User không hài lòng với bản trước chỉ dừng ở đánh giá/backlog.
+  - Cần tạo bộ multi-agent khả dụng ngay cho stack XAF + EF Core + MAUI.
+- **Actions Taken**:
+  - Tạo bộ agent mới tại `.codex/agents/` gồm manifest điều phối + 8 prompt templates theo vai trò.
+  - Bổ sung hướng dẫn sử dụng bộ multi-agent vào `README.md`.
+  - Cập nhật `NEXT_STEPS.md` để ưu tiên pilot flow kiểm thử multi-agent vừa tạo.
+- **Result**: Repo hiện có một multi-agent pack có thể dùng ngay để điều phối công việc theo chuỗi Planner -> Implementer -> Reviewer (+ agents chuyên biệt).
+- **Artifacts/Files**:
+  - `.codex/agents/agent-manifest.yaml`
+  - `.codex/agents/README.md`
+  - `.codex/agents/prompts/planner.md`
+  - `.codex/agents/prompts/implementer.md`
+  - `.codex/agents/prompts/reviewer.md`
+  - `.codex/agents/prompts/xaf-module.md`
+  - `.codex/agents/prompts/maui-ui.md`
+  - `.codex/agents/prompts/ef-migration.md`
+  - `.codex/agents/prompts/qa-ci.md`
+  - `.codex/agents/prompts/docs-continuity.md`
+  - `README.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Chạy pilot 1 vertical slice để hiệu chỉnh prompt/gate theo thực tế codebase.
+  - Chuẩn hóa handoff schema dạng JSON schema có ví dụ payload thật.
+## 2026-03-11 14:37
+- **Request**: Gợi ý các module cần thiết cho dự án ERP theo cấu trúc XAF module tách riêng, với app chính ở `XAF/HERP` và module đặt trong `XAF/Modules`.
+- **Context/Constraints**:
+  - User muốn mỗi module có cấu trúc `Base`, `Win`, `Blazor`.
+  - Cần bám thực trạng codebase hiện có: app gốc vẫn đang là template XAF chuẩn với `HERP.Module`, `HERP.Win`, `HERP.Blazor.Server`.
+- **Actions Taken**:
+  - Đọc continuity files theo `AGENTS.md`.
+  - Rà soát nhanh cấu trúc `XAF/HERP` và `XAF/Modules` để xác nhận trạng thái solution hiện tại.
+  - Chuẩn bị đề xuất module map ERP theo nhóm nền tảng, master data, mua hàng, bán hàng, kho, tài chính, nhân sự và hệ thống.
+- **Result**: Có cơ sở để tư vấn lộ trình tách module phù hợp với XAF mà không phá cấu trúc app shell hiện tại.
+- **Artifacts/Files**:
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Chốt danh sách module ưu tiên pha 1 để scaffold dự án module thật trong `XAF/Modules`.
+  - Quyết định cách chuyển dần từ `HERP.Module` sang các module feature riêng.
+## 2026-03-11 14:43
+- **Request**: Làm rõ nên đặt module gốc trong `XAF/Modules/Base` là `HERP.Base` hay dùng luôn `HERP.MasterData`.
+- **Context/Constraints**:
+  - User dự kiến cấu trúc `HERP.Base`, `HERP.Base.Win`, `HERP.Base.Blazor`.
+  - Cần phân biệt rõ module nền tảng kỹ thuật với module nghiệp vụ danh mục dùng chung.
+- **Actions Taken**:
+  - Đối chiếu mục tiêu kiến trúc module XAF với cách chia theo domain ERP.
+  - Chuẩn bị khuyến nghị naming để tránh trộn technical foundation với business master data.
+- **Result**: Có thể chốt quy ước tách `Base` và `MasterData` thành hai vai trò khác nhau để giữ kiến trúc sạch và dễ mở rộng.
+- **Artifacts/Files**:
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Chốt naming convention cuối cùng cho nhóm module dùng chung trước khi scaffold project thật.
+## 2026-03-11 14:47
+- **Request**: Liệt kê rõ những gì nên đặt trong `HERP.Base` và những gì nên đặt trong `HERP.MasterData`.
+- **Context/Constraints**:
+  - User đã chốt hướng giữ `HERP.Base` tách biệt với `HERP.MasterData`.
+  - Cần một guideline đủ cụ thể để scaffold module và phân bổ class ngay từ đầu.
+- **Actions Taken**:
+  - Phân loại lại theo 2 nhóm: technical/shared foundation và business master data.
+  - Chuẩn bị danh sách entity/service/component nên thuộc từng module.
+- **Result**: Có guideline thực dụng để tránh nhét business objects vào `Base` và giữ `MasterData` đúng vai trò nghiệp vụ.
+- **Artifacts/Files**:
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Áp dụng guideline này khi scaffold `HERP.Base` và `HERP.MasterData`.
+## 2026-03-11 15:05
+- **Request**: Tạo các module XAF theo cấu trúc đã chốt (`HERP.<Feature>`, `HERP.<Feature>.Win`, `HERP.<Feature>.Blazor`) trong `XAF/Modules`.
+- **Context/Constraints**:
+  - Giữ `HERP.Module`, `HERP.Win`, `HERP.Blazor.Server` làm shell/composition root.
+  - Module cần bám naming convention đã phân tích: `Base` tách riêng khỏi `MasterData`.
+
+## 2026-03-11 17:20
+- **Request**: Code hóa notification/logging abstractions trong `HERP.Base`.
+- **Context/Constraints**:
+  - Cần bám tài liệu `docs/cross-cutting-architecture.md`.
+  - Ưu tiên abstraction dùng được ngay cho các module sau này mà không phá wiring DI hiện có.
+  - Môi trường hiện tại không thể restore package DevExpress/NuGet từ `api.nuget.org`.
+- **Actions Taken**:
+  - Mở rộng `HerpLogEntry` với `EventName`, `EventId`, `Details`, `CorrelationId`, `TraceId`.
+  - Mở rộng `IHerpLogger` và `NullHerpLogger` với overload log theo event/source context.
+  - Thêm `HerpLoggerExtensions` để gọi nhanh theo severity và domain event.
+  - Nâng `NotificationChannel` thành flags enum, mở rộng `NotificationRequest` với context, action url và danh sách recipient.
+  - Thêm `NotificationRecipient`, `NotificationSendResult`, `NotificationSenderExtensions`, và cập nhật `INotificationSender`/`NullNotificationSender`.
+  - Cập nhật docs tại `XAF/Modules/Base/README.md` và `docs/cross-cutting-architecture.md`.
+  - Thử build `HERP.Base` với `dotnet build --no-restore`, nhưng vẫn bị chặn bởi network khi tải package DevExpress.
+- **Result**: `HERP.Base` hiện đã có notification/logging contracts đủ dùng cho structured logging, correlation context, multi-recipient notification, và helper methods để module nghiệp vụ gọi nhất quán.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/Logging/HerpLogEntry.cs`
+  - `XAF/Modules/Base/HERP.Base/Logging/IHerpLogger.cs`
+  - `XAF/Modules/Base/HERP.Base/Logging/NullHerpLogger.cs`
+  - `XAF/Modules/Base/HERP.Base/Logging/HerpLoggerExtensions.cs`
+  - `XAF/Modules/Base/HERP.Base/Notifications/NotificationChannel.cs`
+  - `XAF/Modules/Base/HERP.Base/Notifications/NotificationRequest.cs`
+  - `XAF/Modules/Base/HERP.Base/Notifications/INotificationSender.cs`
+  - `XAF/Modules/Base/HERP.Base/Notifications/NullNotificationSender.cs`
+  - `XAF/Modules/Base/HERP.Base/Notifications/NotificationRecipient.cs`
+  - `XAF/Modules/Base/HERP.Base/Notifications/NotificationSendResult.cs`
+  - `XAF/Modules/Base/HERP.Base/Notifications/NotificationSenderExtensions.cs`
+  - `XAF/Modules/Base/README.md`
+  - `docs/cross-cutting-architecture.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Chọn adapter runtime thật cho notification/logging thay cho null implementations.
+  - Chuẩn hóa nơi lưu notification log và correlation id xuyên host app.
+
+## 2026-03-11 17:35
+- **Request**: Làm rõ thêm vai trò của `Message` và `Dialog` trong kiến trúc cross-cutting.
+- **Context/Constraints**:
+  - User muốn tách rõ các khái niệm gần nhau sau khi đã có notification/logging abstractions.
+  - Cần guideline phù hợp cho nhiều UI host: Win, Blazor, và MAUI trong tương lai.
+- **Actions Taken**:
+  - Mở rộng `docs/cross-cutting-architecture.md` để thêm mục `Dialog`.
+  - Định nghĩa ranh giới giữa `Message`, `Dialog`, `Notification`, `Log`.
+  - Bổ sung guideline placement và rule-of-thumb để tránh business layer gọi popup trực tiếp.
+  - Cập nhật backlog để cân nhắc thêm `IUserDialogService` nếu muốn chuẩn hóa tiếp bằng code.
+- **Result**: Kiến trúc cross-cutting hiện đã phân biệt rõ message là nội dung, dialog là cơ chế tương tác UI đồng bộ, notification là nhắc việc bất đồng bộ, còn log là dữ liệu truy vết kỹ thuật.
+- **Artifacts/Files**:
+  - `docs/cross-cutting-architecture.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Nếu cần chuẩn hóa bằng code, bước tiếp theo là tạo `IUserDialogService`, `DialogRequest`, `DialogResult`.
+
+## 2026-03-11 17:45
+- **Request**: Code hóa `IUserDialogService` trong `HERP.Base`.
+- **Context/Constraints**:
+  - Cần giữ ranh giới presentation layer sạch, không để business layer gọi popup API trực tiếp.
+  - Ưu tiên contract dùng chung được cho Win, Blazor và WebApi ngay từ bây giờ.
+- **Actions Taken**:
+  - Tạo các abstraction dialog trong `XAF/Modules/Base/HERP.Base/Dialogs`.
+  - Thêm `DialogSeverity`, `DialogButtons`, `DialogResultButton`, `DialogRequest`, `DialogResult`, `IUserDialogService`.
+  - Thêm `NullUserDialogService` và `UserDialogServiceExtensions` để có default behavior an toàn và API dùng ngắn gọn.
+  - Đăng ký `IUserDialogService` vào DI ở Win, Blazor, WebApi.
+  - Cập nhật `XAF/Modules/Base/README.md`, `docs/cross-cutting-architecture.md`, `docs/continuity/NEXT_STEPS.md`.
+- **Result**: `HERP.Base` hiện đã có dialog abstraction chuẩn, giúp application/module code phụ thuộc vào contract chung thay vì popup framework-specific APIs.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/Dialogs/DialogSeverity.cs`
+  - `XAF/Modules/Base/HERP.Base/Dialogs/DialogButtons.cs`
+  - `XAF/Modules/Base/HERP.Base/Dialogs/DialogResultButton.cs`
+  - `XAF/Modules/Base/HERP.Base/Dialogs/DialogRequest.cs`
+  - `XAF/Modules/Base/HERP.Base/Dialogs/DialogResult.cs`
+  - `XAF/Modules/Base/HERP.Base/Dialogs/IUserDialogService.cs`
+  - `XAF/Modules/Base/HERP.Base/Dialogs/NullUserDialogService.cs`
+  - `XAF/Modules/Base/HERP.Base/Dialogs/UserDialogServiceExtensions.cs`
+  - `XAF/HERP/HERP.Win/Startup.cs`
+  - `XAF/HERP/HERP.Blazor.Server/Startup.cs`
+  - `XAF/HERP/HERP.WebApi/Startup.cs`
+  - `XAF/Modules/Base/README.md`
+  - `docs/cross-cutting-architecture.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Cần implementation thật cho dialog ở Win, Blazor, MAUI.
+  - Cần chốt policy khi nào dùng dialog thay vì validation message hoặc notification.
+
+## 2026-03-11 17:55
+- **Request**: Tiếp tục với implementation thật cho dialog ở host app.
+- **Context/Constraints**:
+  - Ưu tiên host Win trước vì nhu cầu confirm/info/error dialog là rõ nhất ở desktop app.
+  - Không muốn ép Blazor/WebApi phải chốt UI strategy ngay lúc này.
+- **Actions Taken**:
+  - Tạo `WinUserDialogService` trong `HERP.Win/Services` dùng `XtraMessageBox`.
+  - Map `DialogButtons`/`DialogSeverity` sang `MessageBoxButtons`/`MessageBoxIcon`.
+  - Cập nhật `HERP.Win/Startup.cs` để dùng `WinUserDialogService` thay cho `NullUserDialogService`.
+  - Cập nhật `docs/cross-cutting-architecture.md` và `NEXT_STEPS.md` cho trạng thái mới.
+- **Result**: Host Win hiện đã có dialog service thật, nên các controller/service ở desktop app có thể dùng `IUserDialogService` để hiển thị confirm/info/error dialog qua abstraction chung.
+- **Artifacts/Files**:
+  - `XAF/HERP/HERP.Win/Services/WinUserDialogService.cs`
+  - `XAF/HERP/HERP.Win/Startup.cs`
+  - `docs/cross-cutting-architecture.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Tạo implementation cho Blazor và MAUI.
+  - Cân nhắc bổ sung owner/window context nếu cần kiểm soát dialog tốt hơn ở Win.
+
+## 2026-03-11 18:05
+- **Request**: Tiếp tục implementation dialog cho host Blazor.
+- **Context/Constraints**:
+  - Cần có implementation dùng được ngay nhưng chưa muốn khóa sớm vào thư viện modal hay component framework riêng.
+  - Blazor Server đã có sẵn `IJSRuntime`, phù hợp cho bước đầu với browser dialog.
+- **Actions Taken**:
+  - Tạo `BlazorUserDialogService` trong `HERP.Blazor.Server/Services` dùng `window.alert` và `window.confirm` qua `IJSRuntime`.
+  - Cập nhật `HERP.Blazor.Server/Startup.cs` để đăng ký `IUserDialogService` theo scope của Blazor thay vì dùng null service.
+  - Cập nhật `docs/cross-cutting-architecture.md`, `REQUEST_RESULT_LOG.md`, và `NEXT_STEPS.md`.
+- **Result**: Host Blazor hiện đã có dialog service thật ở mức cơ bản cho info/error/confirm flows, đủ để controller/service sử dụng abstraction chung mà chưa cần kéo thêm UI modal framework.
+- **Artifacts/Files**:
+  - `XAF/HERP/HERP.Blazor.Server/Services/BlazorUserDialogService.cs`
+  - `XAF/HERP/HERP.Blazor.Server/Startup.cs`
+  - `docs/cross-cutting-architecture.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Nâng Blazor dialog lên modal component riêng nếu cần UX tốt hơn.
+  - Tạo implementation dialog cho MAUI.
+
+## 2026-03-11 18:25
+- **Request**: Hoàn tất implementation dialog cho MAUI và đưa các viewmodel MAUI về dùng abstraction chung.
+- **Context/Constraints**:
+  - `HERP.Base` là project XAF nên không nên project-reference trực tiếp từ MAUI vì sẽ kéo theo dependencies không phù hợp mobile.
+  - Nhiều page MAUI đang khởi tạo viewmodel trực tiếp trong XAML thay vì hoàn toàn qua DI.
+- **Actions Taken**:
+  - Link source các file `Dialogs/*.cs` từ `XAF/Modules/Base/HERP.Base` vào project MAUI thay vì project-reference toàn bộ `HERP.Base`.
+  - Tạo `MauiUserDialogService` dùng `DisplayAlert`.
+  - Tạo `ServiceHelper` để expose `IServiceProvider` cho các viewmodel được khởi tạo trực tiếp từ XAML.
+  - Đăng ký `IUserDialogService` trong `MauiProgram`.
+  - Refactor các viewmodel MAUI đang gọi `DisplayAlert` trực tiếp sang `IUserDialogService`.
+  - Xác nhận không còn `DisplayAlert(...)` trực tiếp trong viewmodels; chỉ còn nằm trong `MauiUserDialogService`.
+- **Result**: Dialog abstraction hiện đã hoàn chỉnh trên 3 host UI chính: Win, Blazor, MAUI. WebApi vẫn giữ `NullUserDialogService` theo chủ đích vì không có UI tương tác trực tiếp.
+- **Artifacts/Files**:
+  - `MAUI/HERP/HERP/HERP.csproj`
+  - `MAUI/HERP/HERP/MauiProgram.cs`
+  - `MAUI/HERP/HERP/Services/MauiUserDialogService.cs`
+  - `MAUI/HERP/HERP/Services/ServiceHelper.cs`
+  - `MAUI/HERP/HERP/ViewModels/DetailForm1ViewModel.cs`
+  - `MAUI/HERP/HERP/ViewModels/DetailForm2ViewModel.cs`
+  - `MAUI/HERP/HERP/ViewModels/DetailForm3ViewModel.cs`
+  - `MAUI/HERP/HERP/ViewModels/DetailForm4ViewModel.cs`
+  - `MAUI/HERP/HERP/ViewModels/DetailForm5ViewModel.cs`
+  - `MAUI/HERP/HERP/ViewModels/ExcelImportViewModel.cs`
+  - `MAUI/HERP/HERP/ViewModels/ListQuickFiltersViewModel.cs`
+  - `MAUI/HERP/HERP/ViewModels/ListSearchViewModel.cs`
+  - `MAUI/HERP/HERP/ViewModels/ListSimpleViewModel.cs`
+  - `MAUI/HERP/HERP/ViewModels/LoginForm1ViewModel.cs`
+  - `MAUI/HERP/HERP/ViewModels/LoginForm2ViewModel.cs`
+  - `MAUI/HERP/HERP/ViewModels/PostsViewModel.cs`
+  - `MAUI/HERP/HERP/ViewModels/WebApiViewModel.cs`
+  - `docs/cross-cutting-architecture.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Nếu cần UX tốt hơn, nâng dialog của Blazor/MAUI từ alert cơ bản sang modal component hoặc action sheet.
+  - Chuẩn hóa thêm input dialog nếu business flow thật sự cần nhập dữ liệu tương tác.
+
+## 2026-03-11 18:40
+- **Request**: Tiếp tục chuẩn hóa phần `Message` sau khi đã hoàn tất dialog đa host.
+- **Context/Constraints**:
+  - Cần một contract đủ nhẹ để các module dùng chung trước khi khóa strategy localization cụ thể.
+  - Giải pháp hiện tại nên chạy được ngay mà không kéo thêm resource framework phức tạp.
+- **Actions Taken**:
+  - Thêm nhóm `Messages` trong `HERP.Base` gồm `MessageSeverity`, `HerpMessage`, `HerpMessageKeys`, `IHerpMessageLocalizer`, `PassthroughHerpMessageLocalizer`, `HerpMessageFactory`.
+  - Đăng ký `IHerpMessageLocalizer` trong DI của Win, Blazor, WebApi.
+  - Cập nhật `XAF/Modules/Base/README.md` và `docs/cross-cutting-architecture.md` để phản ánh trạng thái mới.
+  - Cập nhật backlog/continuity để bước sau có thể chốt localization adapter thật.
+- **Result**: `Message` nay đã có contract chuẩn với key, severity, text mặc định và parameters, đủ để thống nhất giữa exception, dialog, notification và localization phase sau.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/Messages/MessageSeverity.cs`
+  - `XAF/Modules/Base/HERP.Base/Messages/HerpMessage.cs`
+  - `XAF/Modules/Base/HERP.Base/Messages/HerpMessageKeys.cs`
+  - `XAF/Modules/Base/HERP.Base/Messages/IHerpMessageLocalizer.cs`
+  - `XAF/Modules/Base/HERP.Base/Messages/PassthroughHerpMessageLocalizer.cs`
+  - `XAF/Modules/Base/HERP.Base/Messages/HerpMessageFactory.cs`
+  - `XAF/HERP/HERP.Win/Startup.cs`
+  - `XAF/HERP/HERP.Blazor.Server/Startup.cs`
+  - `XAF/HERP/HERP.WebApi/Startup.cs`
+  - `XAF/Modules/Base/README.md`
+  - `docs/cross-cutting-architecture.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Chọn resource/localization strategy thật cho `HerpMessage`.
+  - Chuẩn hóa để exception/notification/dialog có thể nhận `HerpMessage` trực tiếp ở phase sau.
+
+## 2026-03-11 18:50
+- **Request**: Tiếp tục nối `Message` với `Dialog` để giảm map tay ở UI layer.
+- **Context/Constraints**:
+  - Đã có `HerpMessage` và `IUserDialogService`, nhưng application/UI code vẫn sẽ phải tự map severity/title nếu chưa có helper bridge.
+- **Actions Taken**:
+  - Thêm `UserDialogMessageExtensions` trong `HERP.Base/Dialogs`.
+  - Chuẩn hóa mapping từ `MessageSeverity` sang `DialogSeverity`.
+  - Cập nhật README module Base và docs kiến trúc cross-cutting.
+- **Result**: UI layer giờ có thể hiển thị `HerpMessage` trực tiếp qua `IUserDialogService`, giảm lặp logic map giữa message contract và dialog request.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/Dialogs/UserDialogMessageExtensions.cs`
+  - `XAF/Modules/Base/README.md`
+  - `docs/cross-cutting-architecture.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Cân nhắc bridge tương tự từ `HerpMessage` sang notification và exception.
+
+## 2026-03-11 19:00
+- **Request**: Nối tiếp `HerpMessage` sang `Notification` và `Exception`.
+- **Context/Constraints**:
+  - Mục tiêu là tránh mỗi lớp cross-cutting tự giữ text/severity riêng rồi map tay nhiều lần.
+  - Cần giữ tương thích ngược với code đang tạo exception bằng string.
+- **Actions Taken**:
+  - Thêm constructor nhận `HerpMessage` vào `HerpException` và các exception dẫn xuất.
+  - Thêm `HerpExceptionFactory` để tạo business/validation/configuration/integration exception từ `HerpMessage`.
+  - Thêm `NotificationMessageExtensions` để gửi notification trực tiếp từ `HerpMessage`.
+  - Cập nhật README module Base và docs kiến trúc.
+- **Result**: `HerpMessage` hiện đã là contract trung tâm cho 3 nhánh chính: dialog, notification, exception; code mới có thể dùng một message object xuyên suốt thay vì truyền text rời rạc ở từng lớp.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/Exceptions/HerpException.cs`
+  - `XAF/Modules/Base/HERP.Base/Exceptions/HerpBusinessException.cs`
+  - `XAF/Modules/Base/HERP.Base/Exceptions/HerpValidationException.cs`
+  - `XAF/Modules/Base/HERP.Base/Exceptions/HerpConfigurationException.cs`
+  - `XAF/Modules/Base/HERP.Base/Exceptions/HerpIntegrationException.cs`
+  - `XAF/Modules/Base/HERP.Base/Exceptions/HerpExceptionFactory.cs`
+  - `XAF/Modules/Base/HERP.Base/Notifications/NotificationMessageExtensions.cs`
+  - `XAF/Modules/Base/README.md`
+  - `docs/cross-cutting-architecture.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Chốt localization/resource strategy thật cho `HerpMessage`.
+  - Bắt đầu áp dụng `HerpMessage` vào feature code thật, ví dụ validation/business exception của `MasterData` hoặc `Purchasing`.
+- **Actions Taken**:
+  - Tạo script `scripts/scaffold-xaf-modules.ps1` để scaffold đồng loạt XAF module projects.
+  - Sinh 15 nhóm module domain với đủ `Base/Win/Blazor` dưới `XAF/Modules`.
+  - Thêm tất cả module projects vào `XAF/HERP.slnx`.
+  - Nối project references từ app shell sang các module mới và thêm `RequiredModuleTypes` trong `HERP.Module`, `HERP.Win`, `HERP.Blazor.Server`.
+  - Bổ sung `XAF/Directory.Packages.props` để modules ngoài `XAF/HERP` dùng chung central package versions.
+- **Result**: Repo hiện đã có đầy đủ khung module ERP và wiring cơ bản để bắt đầu đổ business objects/use cases vào từng domain module.
+- **Artifacts/Files**:
+  - `scripts/scaffold-xaf-modules.ps1`
+  - `XAF/Directory.Packages.props`
+  - `XAF/Modules/README.md`
+  - `XAF/HERP.slnx`
+  - `XAF/HERP/HERP.Module/HERP.Module.csproj`
+  - `XAF/HERP/HERP.Module/Module.cs`
+  - `XAF/HERP/HERP.Win/HERP.Win.csproj`
+  - `XAF/HERP/HERP.Win/WinModule.cs`
+  - `XAF/HERP/HERP.Blazor.Server/HERP.Blazor.Server.csproj`
+  - `XAF/HERP/HERP.Blazor.Server/BlazorModule.cs`
+  - `XAF/Modules/...` (15 module groups scaffolded)
+- **Open Items**:
+  - Chạy restore/build trên máy dev có truy cập NuGet/DevExpress để xác nhận compile end-to-end.
+  - Bắt đầu populate `HERP.Base` và `HERP.MasterData` bằng business objects/service contracts đầu tiên.
+## 2026-03-11 15:17
+- **Request**: Tiếp tục sau khi scaffold modules, bắt đầu populate `HERP.Base` và `HERP.MasterData`.
+- **Context/Constraints**:
+  - Giữ scope an toàn trong hai module đầu tiên, chưa đi sâu sang flow mua/bán.
+  - Cần tạo được bộ class nền để các vertical slice sau tái sử dụng.
+- **Actions Taken**:
+  - Thêm contracts dùng chung trong `HERP.Base`: `ICodeAware`, `IActivatable`, `IHasCompany`, `IHasBranch`.
+  - Thêm `HerpBaseObject`, `DocumentStatus`, `PermissionKeys`, `INumberingService` vào `HERP.Base`.
+  - Thêm business objects đầu tiên vào `HERP.MasterData`: `Company`, `Branch`, `Warehouse`, `UnitOfMeasure`, `Currency`, `Tax`.
+  - Cập nhật `HERP.Base` và `HERP.MasterData` module registrations để export các kiểu mới.
+  - Nối các entity master data vào `HERPEFCoreDbContext` và thêm unique indexes cơ bản theo `Code`.
+- **Result**: Hai module nền tảng đầu tiên đã có class khởi đầu thật sự hữu dụng để bắt đầu dựng nghiệp vụ ERP thay vì chỉ có project skeleton.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/BusinessObjects/HerpBaseObject.cs`
+  - `XAF/Modules/Base/HERP.Base/Contracts/*.cs`
+  - `XAF/Modules/Base/HERP.Base/Enums/DocumentStatus.cs`
+  - `XAF/Modules/Base/HERP.Base/Security/PermissionKeys.cs`
+  - `XAF/Modules/Base/HERP.Base/Services/INumberingService.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/*.cs`
+  - `XAF/Modules/Base/HERP.Base/Module.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/Module.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+- **Open Items**:
+  - Bổ sung các master data tiếp theo như `Department`, `Supplier`, `Customer`, `Product`.
+  - Tạo vertical slice đầu tiên trên nền các class vừa thêm.
+## 2026-03-11 15:28
+- **Request**: Điều chỉnh kiến trúc vì `ApplicationUser` và `ApplicationUserLoginInfo` để trong `HERP.Module/BusinessObjects` chưa hợp lý; bổ sung `DisplayName` thân thiện và các abstract audit classes.
+- **Context/Constraints**:
+  - User muốn phân tách rõ security/shared foundation khỏi app shell.
+  - Cần chuẩn bị base classes audit để các business entities kế tiếp kế thừa thống nhất.
+- **Actions Taken**:
+  - Chuyển `ApplicationUser` và `ApplicationUserLoginInfo` sang `XAF/Modules/Base/HERP.Base/Security`.
+  - Thêm các trường `FirstName`, `LastName`, `DisplayName` và computed `FriendlyDisplayName` cho `ApplicationUser`.
+  - Thêm `HerpAuditedObject` và `HerpCompanyScopedAuditedObject` trong `HERP.Base`.
+  - Cập nhật `HERPDbContext`, `CustomAuthenticationProvider`, `Updater`, và các startup files của Win/Blazor/WebApi để dùng namespace security mới.
+  - Cho các master data hiện có kế thừa audit base classes mới.
+- **Result**: Security objects nay đã nằm đúng module nền tảng, có display name thân thiện, và codebase đã có audit abstractions để mở rộng nghiệp vụ ERP nhất quán hơn.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/Security/ApplicationUser.cs`
+  - `XAF/Modules/Base/HERP.Base/Security/ApplicationUserLoginInfo.cs`
+  - `XAF/Modules/Base/HERP.Base/BusinessObjects/HerpAuditedObject.cs`
+  - `XAF/Modules/Base/HERP.Base/BusinessObjects/HerpCompanyScopedAuditedObject.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/HERP/HERP.Module/Services/CustomAuthenticationProvider.cs`
+  - `XAF/HERP/HERP.Module/DatabaseUpdate/Updater.cs`
+  - `XAF/HERP/HERP.Win/Startup.cs`
+  - `XAF/HERP/HERP.Blazor.Server/Startup.cs`
+  - `XAF/HERP/HERP.WebApi/Startup.cs`
+- **Open Items**:
+  - Quyết định có cần thêm controller/update logic để tự gán `CreatedBy/ModifiedBy` và timestamps hay không.
+  - Mở rộng master data kế tiếp (`Supplier`, `Customer`, `Product`) trên nền audit classes mới.
+## 2026-03-11 15:36
+- **Request**: Tiếp tục hoàn thiện phần audit sau khi đã có abstract audit classes.
+- **Context/Constraints**:
+  - Cần cơ chế dùng được ngay cho Win/Blazor/WebApi mà không phụ thuộc cứng vào một UI host cụ thể.
+  - Ưu tiên an toàn: nếu chưa resolve được current user entity thì vẫn phải lưu được timestamp và user name.
+- **Actions Taken**:
+  - Thêm `IAuditContextProvider` và `SystemAuditContextProvider` vào `HERP.Base`.
+  - Mở rộng `HerpAuditedObject` với `CreatedByName` và `ModifiedByName`.
+  - Override `SaveChanges/SaveChangesAsync` trong `HERPEFCoreDbContext` để tự động stamp audit fields cho mọi entity kế thừa `HerpAuditedObject`.
+  - Đăng ký `IAuditContextProvider` trong startup của Win, Blazor, và WebApi.
+- **Result**: Audit runtime cơ bản đã hoạt động ở mức timestamp + user name, đồng thời vẫn có hook `CreatedById/ModifiedById` để nâng cấp mapping sang `ApplicationUser` sau.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/Services/IAuditContextProvider.cs`
+  - `XAF/Modules/Base/HERP.Base/Services/SystemAuditContextProvider.cs`
+  - `XAF/Modules/Base/HERP.Base/BusinessObjects/HerpAuditedObject.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/HERP/HERP.Win/Startup.cs`
+  - `XAF/HERP/HERP.Blazor.Server/Startup.cs`
+  - `XAF/HERP/HERP.WebApi/Startup.cs`
+- **Open Items**:
+  - Nếu cần audit chặt hơn, thêm implementation `IAuditContextProvider` lấy `ApplicationUser.Id` thật từ security context.
+  - Dùng nền audit này để triển khai `Supplier`, `Customer`, `Product`.
+## 2026-03-11 15:43
+- **Request**: Tiếp tục mở rộng `HERP.MasterData` sau khi đã có nền audit và security.
+- **Context/Constraints**:
+  - Cần tạo các BO đủ thực dụng để bắt đầu vertical slice nghiệp vụ đầu tiên.
+  - Ưu tiên các master data phổ biến trong ERP trước khi sang purchase/sales flow.
+- **Actions Taken**:
+  - Thêm `Department`, `BusinessPartner`, `Supplier`, `Customer`, `ProductCategory`, `Product` vào `HERP.MasterData`.
+  - Cập nhật `HERPMasterDataModule` để export các kiểu mới.
+  - Nối các entity mới vào `HERPEFCoreDbContext` và thêm unique indexes cơ bản theo `Code` / `Barcode`.
+- **Result**: `HERP.MasterData` nay đã có đủ nhóm dữ liệu nền để bắt đầu slice `Supplier` hoặc `Product` mà không cần tạo BO từ đầu.
+- **Artifacts/Files**:
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Department.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/BusinessPartner.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Supplier.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Customer.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/ProductCategory.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Product.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/Module.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+- **Open Items**:
+  - Tạo validation/business rules cụ thể hơn cho supplier/customer/product.
+  - Chọn vertical slice đầu tiên để nối UI và application service.
+## 2026-03-11 15:51
+- **Request**: Tạo `README.md` riêng cho từng module và điền sẵn danh sách object chuẩn cho toàn bộ các module hiện có.
+- **Context/Constraints**:
+  - User muốn mỗi module có một danh sách object riêng để quản lý phạm vi nghiệp vụ rõ ràng.
+  - Cần phản ánh cả trạng thái hiện tại của codebase lẫn danh sách object chuẩn dự kiến.
+- **Actions Taken**:
+  - Tạo `README.md` ở cấp từng module domain trong `XAF/Modules/<Module>/README.md`.
+  - Ghi rõ purpose, project layout, standard objects, dependencies và notes cho 15 module hiện có.
+  - Đánh dấu riêng `Base` và `MasterData` với các object đã tồn tại thật trong code.
+- **Result**: Mỗi module hiện đã có tài liệu riêng để làm chuẩn phân ranh object và mở rộng về sau mà không bị lẫn domain.
+- **Artifacts/Files**:
+  - `XAF/Modules/*/README.md`
+- **Open Items**:
+  - Đồng bộ README của từng module khi object thật được bổ sung thêm.
+  - Quyết định thời điểm tách `Supplier/Customer` sang `Parties` và `Product` sang `Products`.
+## 2026-03-11 15:58
+- **Request**: Bổ sung thêm các chức năng cần có trong mỗi module để agent có thể tự động code từng chức năng một.
+- **Context/Constraints**:
+  - User muốn module docs không chỉ liệt kê object mà còn liệt kê các feature slices có thể triển khai dần.
+  - Cần format đủ ngắn gọn để agent đọc nhanh và chọn task tiếp theo.
+- **Actions Taken**:
+  - Bổ sung section `Standard Functions` vào README của toàn bộ module hiện có.
+  - Viết các chức năng theo dạng feature backlog ngắn gọn, dễ tách task.
+- **Result**: Mỗi module hiện đã có danh sách chức năng chuẩn để agent bốc từng chức năng và triển khai tuần tự.
+- **Artifacts/Files**:
+  - `XAF/Modules/*/README.md`
+- **Open Items**:
+  - Nếu cần, chuyển các function lists này thành checklist ưu tiên hoặc automation prompt templates cho agent.
+## 2026-03-11 16:05
+- **Request**: Hỏi cách phân chia từng module cho các lập trình viên khác nhau mà vẫn chạy được, hạn chế việc người này push ảnh hưởng người khác.
+- **Context/Constraints**:
+  - Repo đang đi theo hướng module hóa XAF theo domain.
+  - Cần một cách làm phù hợp cho teamwork, Git workflow, và các điểm hay va nhau trong XAF/EF Core.
+- **Actions Taken**:
+  - Tổng hợp khuyến nghị về chia ownership theo module, branch strategy, migration strategy, và các file cần tránh sửa đồng thời.
+  - Chuẩn bị hướng dẫn làm việc sao cho mỗi dev có thể chạy app dù module khác đang phát triển song song.
+- **Result**: Có guideline vận hành team theo module để giảm xung đột merge và hạn chế ảnh hưởng chéo khi push.
+- **Artifacts/Files**:
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Nếu cần, viết thành file guideline chính thức trong repo như `docs/team-module-workflow.md`.
+## 2026-03-11 16:12
+- **Request**: Làm rõ cách để mỗi lập trình viên chỉ cần phần code của app gốc, module họ phụ trách, cùng `Base` và `MasterData`.
+- **Context/Constraints**:
+  - User không muốn mỗi dev phải kéo và chạy toàn bộ tất cả module.
+  - Cần một cấu trúc vẫn chạy được app nhưng giới hạn phạm vi source theo module.
+- **Actions Taken**:
+  - Đề xuất hướng tổ chức theo solution/profile riêng cho từng module owner thay vì luôn dùng full solution.
+  - Chuẩn bị guideline về tập project tối thiểu mỗi dev cần có: app shell + `Base` + `MasterData` + module phụ trách.
+- **Result**: Có hướng chia workspace/solution giúp dev làm việc độc lập hơn mà không phải mang toàn bộ code của mọi module khác.
+- **Artifacts/Files**:
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Nếu user chốt hướng này, tạo thêm các solution/module profile riêng như `HERP.MasterData.slnx`, `HERP.Purchasing.slnx`.
+## 2026-03-11 16:20
+- **Request**: Refactor để app shell chỉ bắt buộc `Base + MasterData`, đồng thời tạo các solution riêng theo module owner.
+- **Context/Constraints**:
+  - User muốn mỗi dev chỉ cần app gốc + `Base` + `MasterData` + module họ phụ trách.
+  - Cần tránh việc thiếu module khác làm app shell không chạy được.
+- **Actions Taken**:
+  - Giảm `RequiredModuleTypes` trong `HERP.Module`, `HERP.Win`, `HERP.Blazor.Server` xuống chỉ còn `Base` và `MasterData`.
+  - Tạo `OptionalModuleLoader` để nạp các module nghiệp vụ theo kiểu optional ở runtime khi assembly có mặt.
+  - Cập nhật `Startup` của Win/Blazor/WebApi để đăng ký optional modules.
+  - Đổi `ProjectReference` của các module nghiệp vụ trong shell projects sang dạng `Condition=\"Exists(...)\"`.
+  - Tạo các solution profile riêng: `HERP.MasterData.slnx`, `HERP.Purchasing.slnx`, `HERP.Inventory.slnx`, `HERP.Sales.slnx`, `HERP.Finance.slnx`.
+  - Thêm guideline teamwork tại `docs/team-module-workflow.md`.
+- **Result**: Kiến trúc shell đã mềm hơn để hỗ trợ làm việc theo module profile thay vì luôn phụ thuộc full set modules.
+- **Artifacts/Files**:
+  - `XAF/HERP/HERP.Module/OptionalModuleLoader.cs`
+  - `XAF/HERP/HERP.Module/Module.cs`
+  - `XAF/HERP/HERP.Win/WinModule.cs`
+  - `XAF/HERP/HERP.Blazor.Server/BlazorModule.cs`
+  - `XAF/HERP/HERP.Win/Startup.cs`
+  - `XAF/HERP/HERP.Blazor.Server/Startup.cs`
+  - `XAF/HERP/HERP.WebApi/Startup.cs`
+  - `XAF/HERP/HERP.Module/HERP.Module.csproj`
+  - `XAF/HERP/HERP.Win/HERP.Win.csproj`
+  - `XAF/HERP/HERP.Blazor.Server/HERP.Blazor.Server.csproj`
+  - `XAF/HERP.MasterData.slnx`
+  - `XAF/HERP.Purchasing.slnx`
+  - `XAF/HERP.Inventory.slnx`
+  - `XAF/HERP.Sales.slnx`
+  - `XAF/HERP.Finance.slnx`
+  - `docs/team-module-workflow.md`
+- **Open Items**:
+  - Kiểm tra runtime thực tế trên máy dev khi chỉ giữ subset modules trong workspace.
+  - Nếu cần, tạo thêm script sinh tự động solution profile cho module mới.
+
+## 2026-03-11 16:18
+- **Request**: Kiểm tra xem dự án XAF EF hiện tại có thể quản lý tập trung các mảng như validation, appearance, helper, utils, criteria, filter hay không.
+- **Context/Constraints**:
+  - Cần đánh giá theo hiện trạng codebase.
+  - Ưu tiên xác định điểm neo kiến trúc có thể tái sử dụng cho nhiều module.
+- **Actions Taken**:
+  - Rà soát `HERP.Base`, `HERP.Module`, các startup Win/Blazor/WebApi, `HERPDbContext` và business objects trong `HERP.MasterData`.
+  - Kiểm tra việc bật `ValidationModule`, `ConditionalAppearanceModule`, các criteria/filter trong model và EF model builder.
+  - Đối chiếu xem rules hiện nay đang nằm ở entity, module shell hay chưa có chuẩn chung.
+- **Result**:
+  - Dự án đã có nền tảng tốt để quản lý tập trung: `HERP.Base` là module cross-cutting, app shell đã bật Validation/Appearance, `HERPDbContext` đang gom audit và schema rules.
+  - Tuy nhiên hiện chưa có structure/chuẩn chung riêng cho `validation`, `appearance`, `criteria`, `filter`, `helper`, `utils`; phần này vẫn chưa được đóng thành policy catalog hoặc controller/service dùng chung.
+  - Kết luận: có thể triển khai quản lý tập trung rất tốt trên kiến trúc hiện nay, nhưng nên thiết kế thêm convention cross-cutting trước khi nhiều module nghiệp vụ phình to.
+- **Artifacts/Files**:
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Thiết kế convention/module dùng chung để gom `ValidationRules`, `AppearanceRules`, `CriteriaCatalog`, `FilterDefinitions`, `Helpers`.
+  - Quy định khi nào rule đặt trên BO, khi nào đặt trong controller/service/catalog tập trung.
+## 2026-03-11 16:32
+- **Request**: Xem xét trước các vấn đề quản lý tập trung cần thiết như validation, localization, appearance, helper, utils, criteria, filter, inheritance để đưa vào quy trình.
+- **Context/Constraints**:
+  - User muốn chuẩn hóa trước khi đi sâu thêm vào từng module nghiệp vụ.
+  - Đây là nhóm cross-cutting concerns, nếu đặt sai chỗ sẽ gây lặp lại và khó bảo trì giữa các module.
+- **Actions Taken**:
+  - Xác định nhóm concern nào nên quản lý tập trung ở `HERP.Base`, nhóm nào nên để theo module.
+  - Chuẩn bị guideline quy trình phát triển module mới để luôn xét các concern chung trước khi code feature.
+- **Result**: Có khung định hướng để chuẩn hóa cross-cutting concerns cho toàn bộ kiến trúc module ERP/XAF.
+- **Artifacts/Files**:
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Nếu user chốt, viết tài liệu chính thức như `docs/cross-cutting-architecture.md`.
+## 2026-03-11 16:42
+- **Request**: Thiết kế và tạo bộ model đầy đủ cho `SystemSetting`, `CompanySetting`, `UserSetting`, `ISettingProvider`, `SettingValueType`, rule fallback.
+- **Context/Constraints**:
+  - Cần giữ ranh giới sạch: abstraction ở `HERP.Base`, entity/settings module ở `HERP.Administration`.
+  - Không muốn phá mô hình subset-modules đã thiết kế trước đó.
+- **Actions Taken**:
+  - Thêm `SettingScope`, `SettingValueType`, `ISettingProvider`, `SettingValueSerializer` trong `HERP.Base`.
+  - Thêm `SettingEntryBase`, `SystemSetting`, `CompanySetting`, `UserSetting` trong `HERP.Administration`.
+  - Thêm `SettingProvider` dùng `IObjectSpaceFactory` để đọc/ghi settings theo cấp `System`, `Company`, `User`.
+  - Cập nhật `HERPAdministrationModule` và `HERPEFCoreDbContext` để export/map các setting entities.
+  - Thêm `OptionalServiceRegistrar` để đăng ký `ISettingProvider` chỉ khi module `Administration` có mặt.
+- **Result**: Codebase hiện đã có bộ khung settings 3 cấp đủ để triển khai chính sách theo hệ thống, công ty, cá nhân mà vẫn phù hợp kiến trúc module hóa.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/Enums/SettingScope.cs`
+  - `XAF/Modules/Base/HERP.Base/Enums/SettingValueType.cs`
+  - `XAF/Modules/Base/HERP.Base/Services/ISettingProvider.cs`
+  - `XAF/Modules/Base/HERP.Base/Services/SettingValueSerializer.cs`
+  - `XAF/Modules/Administration/HERP.Administration/BusinessObjects/SettingEntryBase.cs`
+  - `XAF/Modules/Administration/HERP.Administration/BusinessObjects/SystemSetting.cs`
+  - `XAF/Modules/Administration/HERP.Administration/BusinessObjects/CompanySetting.cs`
+  - `XAF/Modules/Administration/HERP.Administration/BusinessObjects/UserSetting.cs`
+  - `XAF/Modules/Administration/HERP.Administration/Services/SettingProvider.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/HERP/HERP.Module/OptionalServiceRegistrar.cs`
+- **Open Items**:
+  - Kiểm tra lại logic fallback khi giá trị thực tế bằng đúng `defaultValue`.
+  - Tạo UI quản trị settings và guideline naming keys chính thức.
+## 2026-03-11 16:49
+- **Request**: Tạo `docs/cross-cutting-architecture.md` và định nghĩa chuẩn cho validation, localization, appearance, criteria/filter, inheritance tree.
+- **Context/Constraints**:
+  - User muốn chuẩn hóa cross-cutting concerns trước khi mở rộng thêm feature.
+  - Tài liệu cần đủ cụ thể để agent và dev bám theo khi tạo object/chức năng mới.
+- **Actions Taken**:
+  - Tạo tài liệu `docs/cross-cutting-architecture.md`.
+  - Định nghĩa placement rules, validation strategy, localization convention, appearance rules, criteria/filter strategy, inheritance tree, và checklist tạo object/feature mới.
+- **Result**: Repo hiện đã có tài liệu kiến trúc cross-cutting chính thức để làm baseline cho mọi module ERP/XAF tiếp theo.
+- **Artifacts/Files**:
+  - `docs/cross-cutting-architecture.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Chuyển các quy tắc trong tài liệu này thành helper/template/code conventions cụ thể trong `HERP.Base`.
+## 2026-03-11 16:55
+- **Request**: Bổ sung thêm định nghĩa chuẩn về `format` và `exception` vào tài liệu cross-cutting.
+- **Context/Constraints**:
+  - User muốn chốt thêm hai cross-cutting concern quan trọng trước khi hiện thực hóa bằng code.
+  - Cần bám cùng tài liệu kiến trúc đã tạo trước đó.
+- **Actions Taken**:
+  - Mở rộng `docs/cross-cutting-architecture.md` với hai mục mới: `Format` và `Exception`.
+  - Định nghĩa mục tiêu, placement, rules, examples và guideline cho từng nhóm.
+- **Result**: Tài liệu cross-cutting hiện đã bao quát thêm format chuẩn và chiến lược exception handling cho toàn hệ thống.
+- **Artifacts/Files**:
+  - `docs/cross-cutting-architecture.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Khi sang bước hiện thực hóa, cần tạo helper format và base exception types trong `HERP.Base`.
+## 2026-03-11 17:02
+- **Request**: Hiện thực hóa tiếp phần `format` và `exception` theo tài liệu cross-cutting.
+- **Context/Constraints**:
+  - Cần đưa các chuẩn vừa định nghĩa trong docs thành code dùng chung ở `HERP.Base`.
+  - Giữ implementation nhẹ, chưa khóa cứng vào một UI framework cụ thể.
+- **Actions Taken**:
+  - Thêm base exception types trong `HERP.Base/Exceptions`.
+  - Thêm `HerpFormatOptions`, `IHerpFormatProvider`, `DefaultHerpFormatProvider`, `HerpFormatHelper` trong `HERP.Base/Formatting`.
+  - Đăng ký `IHerpFormatProvider` vào DI của Win, Blazor, WebApi.
+  - Cập nhật `Base/README.md` và `docs/cross-cutting-architecture.md` để phản ánh implementation hiện có.
+- **Result**: Kiến trúc cross-cutting cho format và exception nay đã có code backing thực tế, sẵn sàng cho các module nghiệp vụ tái sử dụng.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/Exceptions/*.cs`
+  - `XAF/Modules/Base/HERP.Base/Formatting/*.cs`
+  - `XAF/HERP/HERP.Win/Startup.cs`
+  - `XAF/HERP/HERP.Blazor.Server/Startup.cs`
+  - `XAF/HERP/HERP.WebApi/Startup.cs`
+  - `XAF/Modules/Base/README.md`
+  - `docs/cross-cutting-architecture.md`
+- **Open Items**:
+  - Nếu cần, bổ sung helper parse/format dựa trên `CompanySetting` và `UserSetting`.
+  - Chuẩn hóa cách các module nghiệp vụ throw `HerpBusinessException` thay vì `Exception`.
+## 2026-03-11 17:12
+- **Request**: Làm tiếp phần cross-cutting và bổ sung kiến trúc cho `message`, `notification`, `log`.
+- **Context/Constraints**:
+  - User muốn hoàn thiện thêm các nền tảng cần thiết trước khi đi sâu vào chứng từ nghiệp vụ.
+  - Cần có cả code khung lẫn tài liệu kiến trúc để đội phát triển dùng thống nhất.
+- **Actions Taken**:
+  - Thêm `HerpCriteriaHelper` trong `HERP.Base`.
+  - Thêm `HerpDocumentObject` và `HerpDocumentLineObject` vào cây inheritance dùng chung.
+  - Cập nhật `HERP.Base` module exports và README.
+  - Mở rộng `docs/cross-cutting-architecture.md` với trạng thái hiện tại của criteria/inheritance, đồng thời bổ sung kiến trúc `message`, `notification`, `log`.
+- **Result**: Hệ thống hiện đã có thêm khung chung cho criteria và document objects, cùng định hướng rõ ràng cho message/notification/log trên toàn repo.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/Criteria/HerpCriteriaHelper.cs`
+  - `XAF/Modules/Base/HERP.Base/BusinessObjects/HerpDocumentObject.cs`
+  - `XAF/Modules/Base/HERP.Base/BusinessObjects/HerpDocumentLineObject.cs`
+  - `XAF/Modules/Base/HERP.Base/Module.cs`
+  - `XAF/Modules/Base/README.md`
+  - `docs/cross-cutting-architecture.md`
+- **Open Items**:
+  - Nếu cần, thêm logging/notification abstractions thành code trong `HERP.Base` hoặc module tương ứng.
+  - Bắt đầu dùng `HerpDocumentObject` cho module chứng từ đầu tiên như `Purchasing`.
+## 2026-03-11 19:15
+- **Request**: Tiếp tục áp dụng `HerpMessage` vào code nghiệp vụ thật.
+- **Context/Constraints**:
+  - Cần một pattern tái dùng được cho nhiều module, không chỉ vá riêng từng feature.
+  - `MasterData` là nơi phù hợp để tạo mẫu đầu tiên vì đã có `Supplier`, `Customer`, `Product`.
+- **Actions Taken**:
+  - Thêm `IHerpBusinessValidatable` vào `HERP.Base`.
+  - Cập nhật `HERP.Module/HERPDbContext` để tự gọi validation tập trung trước `SaveChanges`.
+  - Thêm `MasterDataMessageKeys` và `MasterDataValidationMessages`.
+  - Áp dụng `IHerpBusinessValidatable` cho `BusinessPartner` và `Product`.
+  - Dùng `HerpExceptionFactory.Validation(...)` với `HerpMessage` cho các rule nền như company/code/name/email/unit/category/cost/price.
+  - Cập nhật README module Base và MasterData, cùng docs kiến trúc/backlog.
+- **Result**: `Supplier`, `Customer`, `Product` hiện đã dùng `HerpMessage` trong runtime validation thật; validation được gọi tập trung ở `DbContext` nên không phụ thuộc việc feature code có nhớ gọi tay hay không.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/Contracts/IHerpBusinessValidatable.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/Messages/MasterDataMessageKeys.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/Validation/MasterDataValidationMessages.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/BusinessPartner.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Product.cs`
+  - `XAF/Modules/Base/README.md`
+  - `XAF/Modules/MasterData/README.md`
+  - `docs/cross-cutting-architecture.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Mở rộng cùng pattern cho `Company`, `Branch`, `Warehouse`, `Department`, `UnitOfMeasure`, `Tax`.
+  - Nếu muốn code gọn hơn, tạo thêm validation guards/helper dùng chung trong `HERP.Base`.
+
+## 2026-03-11 19:30
+- **Request**: Tiếp tục mở rộng pattern validation runtime cho các danh mục lõi còn lại trong `MasterData`.
+- **Context/Constraints**:
+  - Cần nhân mẫu từ `Supplier/Customer/Product` sang các danh mục nền để pattern đủ thuyết phục và tái dùng được.
+  - Ưu tiên reuse `MasterDataValidationMessages` thay vì tiếp tục copy/paste throw logic.
+- **Actions Taken**:
+  - Mở rộng `MasterDataMessageKeys` và `MasterDataValidationMessages` với các rule cho branch, decimal places, tax rate.
+  - Thêm helper `EnsureCodeAndName`, `EnsureCompany`, `EnsureBranch`.
+  - Áp dụng `IHerpBusinessValidatable` cho `Company`, `Branch`, `Warehouse`, `Department`, `UnitOfMeasure`, `Currency`, `Tax`.
+  - Dùng `HerpExceptionFactory.Validation(...)` với `HerpMessage` cho toàn bộ các rule runtime mới.
+  - Cập nhật `XAF/Modules/MasterData/README.md` và backlog.
+- **Result**: Pattern validation runtime bằng `HerpMessage` hiện đã phủ gần hết nhóm master data lõi, không còn chỉ là proof-of-concept ở một vài entity riêng lẻ.
+- **Artifacts/Files**:
+  - `XAF/Modules/MasterData/HERP.MasterData/Messages/MasterDataMessageKeys.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/Validation/MasterDataValidationMessages.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Company.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Branch.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Warehouse.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Department.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/UnitOfMeasure.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Currency.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Tax.cs`
+  - `XAF/Modules/MasterData/README.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Bổ sung validation cho `ProductCategory`.
+  - Nếu muốn code ngắn hơn nữa, tách validation guards chung vào `HERP.Base`.
+
+## 2026-03-11 19:40
+- **Request**: Tiếp tục cho đến khi khung validation `MasterData` gọn và đủ dùng hơn.
+- **Context/Constraints**:
+  - Sau khi phủ nhiều entity, pattern bắt đầu lặp lại ở các `Ensure...` và các check range/non-negative.
+  - Cần đẩy phần guard chung lên `HERP.Base` để module sau tái dùng được.
+- **Actions Taken**:
+  - Thêm `HerpValidationGuard` vào `HERP.Base`.
+  - Refactor `MasterDataValidationMessages` để dùng guard chung cho required checks.
+  - Refactor `Product`, `Currency`, `Tax` sang dùng guard chung cho non-negative/range checks.
+  - Áp dụng `IHerpBusinessValidatable` cho `ProductCategory`.
+  - Cập nhật README module Base và MasterData, cùng backlog.
+- **Result**: Khung validation runtime hiện đã gọn hơn và bớt lặp, đồng thời `ProductCategory` cũng đã tham gia cùng pattern với phần còn lại của `MasterData`.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/HERP.Base/Validation/HerpValidationGuard.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/Validation/MasterDataValidationMessages.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Product.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Currency.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/Tax.cs`
+  - `XAF/Modules/MasterData/HERP.MasterData/BusinessObjects/ProductCategory.cs`
+  - `XAF/Modules/Base/README.md`
+  - `XAF/Modules/MasterData/README.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Mở rộng `HerpValidationGuard` nếu cần thêm unique/regex/date/state-transition helpers.
+  - Bắt đầu áp dụng pattern này sang module chứng từ đầu tiên như `Purchasing`.
+
+## 2026-03-11 19:55
+- **Request**: Tiếp tục sang module chứng từ đầu tiên sau khi ổn định pattern ở `MasterData`.
+- **Context/Constraints**:
+  - `Purchasing` đang gần như trống, phù hợp để tạo mẫu đầu tiên cho document module.
+  - Cần bám `HerpDocumentObject`, `HerpDocumentLineObject`, `HerpMessage`, và runtime validation pattern đã chốt.
+- **Actions Taken**:
+  - Thêm project reference từ `HERP.Purchasing` sang `HERP.MasterData`.
+  - Tạo `PurchaseOrder`, `PurchaseOrderLine`, `PurchasingMessageKeys`, `PurchasingValidationMessages`.
+  - Export types trong `HERP.Purchasing/Module.cs`.
+  - Nối `PurchaseOrder` và `PurchaseOrderLine` vào `HERP.Module/HERPDbContext` với `DbSet`, index và quan hệ cascade.
+  - Áp dụng validation runtime cho header và line bằng `HerpMessage`, `HerpValidationGuard`, `HerpExceptionFactory`.
+  - Cập nhật `XAF/Modules/Purchasing/README.md` và backlog.
+- **Result**: `Purchasing` hiện đã có vertical slice chứng từ đầu tiên với `PurchaseOrder`/`PurchaseOrderLine`, đủ để làm nền cho `GoodsReceipt` hoặc wiring XAF views ở bước tiếp theo.
+- **Artifacts/Files**:
+  - `XAF/Modules/Purchasing/HERP.Purchasing/HERP.Purchasing.csproj`
+  - `XAF/Modules/Purchasing/HERP.Purchasing/BusinessObjects/PurchaseOrder.cs`
+  - `XAF/Modules/Purchasing/HERP.Purchasing/BusinessObjects/PurchaseOrderLine.cs`
+  - `XAF/Modules/Purchasing/HERP.Purchasing/Messages/PurchasingMessageKeys.cs`
+  - `XAF/Modules/Purchasing/HERP.Purchasing/Validation/PurchasingValidationMessages.cs`
+  - `XAF/Modules/Purchasing/HERP.Purchasing/Module.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/Modules/Purchasing/README.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Thêm `GoodsReceipt` / `GoodsReceiptLine`.
+  - Wiring XAF UI cho `PurchaseOrder`.
+
+## 2026-03-11 20:20
+- **Request**: Xem các module đã có checklist tính năng chưa và trước mắt hoàn thành module `Products`.
+- **Context/Constraints**:
+  - Hầu hết README module hiện mới có `Standard Functions`, chưa phải checklist có trạng thái hoàn thành.
+  - `Products` đang là skeleton rỗng dù README đã liệt kê phạm vi tính năng.
+- **Actions Taken**:
+  - Rà lại README modules và xác nhận hiện tại phần lớn mới dừng ở `Standard Functions`.
+  - Dựng baseline domain/persistence/validation cho `HERP.Products`: `Brand`, `ProductAttribute`, `ProductAttributeValue`, `ProductBarcode`, `ProductVariant`, `BillOfMaterial`, `BillOfMaterialLine`.
+  - Thêm `ProductsMessageKeys`, `ProductsValidationMessages`, `ProductsValidationGuard`.
+  - Nối toàn bộ object của `Products` vào `HERP.Module/HERPDbContext` với `DbSet`, indexes và cascade cho BOM.
+  - Xử lý identity defaults cho các object không có code/name tự nhiên như barcode, attribute value, BOM line.
+  - Viết lại `XAF/Modules/Products/README.md` thành checklist có trạng thái và đánh dấu module complete ở mức baseline.
+- **Result**: `Products` hiện là module đầu tiên có checklist trạng thái rõ ràng và đã complete ở mức baseline domain/persistence/validation; các module khác vẫn chủ yếu mới có `Standard Functions`.
+- **Artifacts/Files**:
+  - `XAF/Modules/Products/HERP.Products/HERP.Products.csproj`
+  - `XAF/Modules/Products/HERP.Products/Module.cs`
+  - `XAF/Modules/Products/HERP.Products/BusinessObjects/*.cs`
+  - `XAF/Modules/Products/HERP.Products/Messages/ProductsMessageKeys.cs`
+  - `XAF/Modules/Products/HERP.Products/Validation/ProductsValidationMessages.cs`
+  - `XAF/Modules/Products/HERP.Products/Validation/ProductsValidationGuard.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/Modules/Products/README.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Wiring XAF UI cho `Products`.
+  - Quyết định có chuyển `Product` và `ProductCategory` từ `MasterData` sang `Products` hay không.
+
+## 2026-03-12 09:15
+- **Request**: Continue and finish `HERP.Products` until it is complete for the current scope.
+- **Context/Constraints**:
+  - `HERP.Products` already had domain objects, persistence wiring, and runtime validation.
+  - The remaining work was to make the XAF-generated UI more usable and then align checklist/backlog status.
+  - Build verification in this environment still stops during restore because NuGet/DevExpress access is blocked.
+- **Actions Taken**:
+  - Added XAF-friendly metadata on `Products` business objects: `DisplayName` captions, clearer relation labels, and `Association`/`Aggregated` for BOM lines.
+  - Kept the UI wiring safe and code-first through metadata instead of introducing a large model diff while the repository still has no established XAF model pattern.
+  - Rewrote `XAF/Modules/Products/README.md` so the module is explicitly marked complete for the current scope and future enhancements are separated from blockers.
+  - Refreshed `docs/continuity/NEXT_STEPS.md` so `Products` is no longer listed as an incomplete end-user module and the remaining items are treated as roadmap decisions.
+  - Ran `dotnet build XAF/Modules/Products/HERP.Products/HERP.Products.csproj -nologo`; the command stopped at restore and returned no code-level compile errors.
+- **Result**: `HERP.Products` is now complete for the current scope: entities, runtime validation, persistence, navigation, and XAF-generated ListView/DetailView are all in a usable state for Win and Blazor through metadata and BOM aggregation.
+- **Artifacts/Files**:
+  - `XAF/Modules/Products/HERP.Products/BusinessObjects/Brand.cs`
+  - `XAF/Modules/Products/HERP.Products/BusinessObjects/ProductAttribute.cs`
+  - `XAF/Modules/Products/HERP.Products/BusinessObjects/ProductAttributeValue.cs`
+  - `XAF/Modules/Products/HERP.Products/BusinessObjects/ProductBarcode.cs`
+  - `XAF/Modules/Products/HERP.Products/BusinessObjects/ProductVariant.cs`
+  - `XAF/Modules/Products/HERP.Products/BusinessObjects/BillOfMaterial.cs`
+  - `XAF/Modules/Products/HERP.Products/BusinessObjects/BillOfMaterialLine.cs`
+  - `XAF/Modules/Products/README.md`
+  - `docs/continuity/NEXT_STEPS.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Decide whether `Product` and `ProductCategory` should move from `HERP.MasterData` to `HERP.Products`.
+  - Add future enhancements such as variant matrix, attribute combinations, and BOM versioning only if business needs them.
+
+## 2026-03-12 09:30
+- **Request**: Split continuity tracking so each module has its own `NEXT_STEPS.md` and `REQUEST_RESULT_LOG.md`, while the shared continuity files only track overall project architecture.
+- **Context/Constraints**:
+  - The repository had a single project-level continuity backlog and log, which had started to accumulate module-specific implementation history.
+  - Going forward, module work needs to be traceable locally without polluting architecture-level continuity.
+- **Actions Taken**:
+  - Updated `AGENTS.md` so module-specific work must also read and update `XAF/Modules/<Module>/NEXT_STEPS.md` and `XAF/Modules/<Module>/REQUEST_RESULT_LOG.md`.
+  - Reduced `docs/continuity/NEXT_STEPS.md` to architecture-level and project-wide coordination items.
+  - Created module-local continuity files for every module under `XAF/Modules`.
+  - Seeded real backlog/history for `Base`, `MasterData`, `Products`, `Purchasing`, and `Administration`, and initialized the remaining modules with starter templates.
+- **Result**: The repository now has two continuity layers: project architecture continuity in `docs/continuity`, and implementation continuity per module inside each module folder.
+- **Artifacts/Files**:
+  - `AGENTS.md`
+  - `docs/continuity/NEXT_STEPS.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `XAF/Modules/*/NEXT_STEPS.md`
+  - `XAF/Modules/*/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Optionally migrate older module-specific entries out of the root log if you want the historical project log to become architecture-only retroactively.
+
+## 2026-03-12 09:45
+- **Request**: Write meaningful `NEXT_STEPS.md` content for each module instead of leaving starter placeholders.
+- **Context/Constraints**:
+  - The repository now uses module-level continuity files.
+  - Each module backlog should reflect its own domain scope and expected implementation order.
+  - Root continuity should stay focused on project architecture and cross-module governance.
+- **Actions Taken**:
+  - Reviewed module READMEs to align each backlog with the intended domain and feature set.
+  - Replaced placeholder `NEXT_STEPS.md` content with prioritized, module-specific execution steps for all modules under `XAF/Modules`.
+  - Kept `Base`, `MasterData`, `Products`, `Purchasing`, and `Administration` aligned with real implementation progress.
+  - Added a root governance reminder so module continuity remains separated from project-wide continuity.
+- **Result**: Every module now has a usable `NEXT_STEPS.md` with concrete follow-up work, making it easier to continue work module by module without relying on the shared backlog.
+- **Artifacts/Files**:
+  - `XAF/Modules/*/NEXT_STEPS.md`
+  - `docs/continuity/NEXT_STEPS.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Optionally backfill older module histories into each module `REQUEST_RESULT_LOG.md` if you want fully separated historical continuity, not only separated future continuity.
+
+## 2026-03-12 10:00
+- **Request**: Backfill module-specific history for the main modules that already have real implementation progress.
+- **Context/Constraints**:
+  - Module-level continuity files had been created, but some of them only contained initialization entries instead of meaningful historical milestones.
+  - The root continuity log should still remain architecture-oriented, while module logs hold actionable implementation history.
+- **Actions Taken**:
+  - Reviewed the existing root continuity log and mapped earlier implementation milestones into the correct module logs.
+  - Backfilled summarized history into `Base`, `MasterData`, `Administration`, `Products`, and `Purchasing` module `REQUEST_RESULT_LOG.md` files.
+  - Kept the backfill concise and milestone-oriented instead of copying the full root history verbatim.
+- **Result**: The main active modules now have usable local history, so future work can continue from module logs directly without depending on the root project log.
+- **Artifacts/Files**:
+  - `XAF/Modules/Base/REQUEST_RESULT_LOG.md`
+  - `XAF/Modules/MasterData/REQUEST_RESULT_LOG.md`
+  - `XAF/Modules/Administration/REQUEST_RESULT_LOG.md`
+  - `XAF/Modules/Products/REQUEST_RESULT_LOG.md`
+  - `XAF/Modules/Purchasing/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Optionally continue the same backfill approach for any other module once it accumulates enough real history to justify it.
+
+## 2026-03-12 10:15
+- **Request**: Create a practical assignment plan so each module can be handed off and completed against the full function list already defined in that module.
+- **Context/Constraints**:
+  - Module READMEs already listed intended functions, but there was no single assignment board to turn them into execution work packages.
+  - The user wants to hand work out module by module until each module reaches its intended scope.
+- **Actions Taken**:
+  - Reviewed the function scope defined in each module README.
+  - Created `docs/module-delivery-plan.md` with work-package style assignments for every module in `XAF/Modules`.
+  - Included module goals, work package codes, dependencies, completion expectations, and a suggested team split.
+  - Updated the root continuity backlog to treat this document as the canonical assignment board for module delivery.
+- **Result**: The project now has a concrete module assignment plan that can be used to hand off `Base`, `MasterData`, `Products`, `Purchasing`, and all remaining modules in a structured way.
+- **Artifacts/Files**:
+  - `docs/module-delivery-plan.md`
+  - `docs/continuity/NEXT_STEPS.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - If needed later, add owner names, priorities, and target phases to the assignment board once the team structure is finalized.
+
+## 2026-03-12 10:25
+- **Request**: Upgrade the module delivery plan into a real assignment board with `Owner`, `Priority`, `Phase`, and `Status`.
+- **Context/Constraints**:
+  - The previous delivery plan already had work packages, but it still needed assignment metadata to be directly usable for team planning.
+  - No real team roster was provided, so the board needed safe default owners and statuses.
+- **Actions Taken**:
+  - Reworked `docs/module-delivery-plan.md` into a structured assignment board.
+  - Added status, priority, and phase legends.
+  - Added a suggested team ownership map and a table for every module with `Code`, `Work Package`, `Owner`, `Priority`, `Phase`, `Status`, and `Notes`.
+  - Marked existing work appropriately, for example `PRD-01` and `PRD-03` as `Done`, `PUR-02` and `MD-*` items as in progress where that reflects the current repo state.
+- **Result**: The repository now has a practical assignment board that can be used immediately for handing work to developers or agents, with enough metadata to support planning, sequencing, and status tracking.
+- **Artifacts/Files**:
+  - `docs/module-delivery-plan.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Replace suggested team owners with real person names once you finalize the team roster.
+
+## 2026-03-12 10:40
+- **Request**: Review which modules are still incomplete and start implementing the missing functions instead of only listing them.
+- **Context/Constraints**:
+  - Most modules outside `Products` are still incomplete.
+  - The request scope is large, so implementation needs to start with the highest-priority ready work packages rather than attempting every unfinished module in one pass.
+  - Build verification in this environment still stops during restore.
+- **Actions Taken**:
+  - Reviewed the assignment board and confirmed that many modules are still incomplete, with `Administration`, `Purchasing`, `Inventory`, `Sales`, `Finance`, `Workflow`, `CRM`, `HRM`, `Integration`, `Projects`, and `Parties` all still having unfinished work.
+  - Implemented `ADM-01` in `HERP.Administration` by adding runtime validation, XAF-friendly settings metadata, and scope-aware validation for system, company, and user settings.
+  - Implemented `PUR-03` in `HERP.Purchasing` by adding `GoodsReceipt`, `GoodsReceiptLine`, validation/messages, module exports, and `DbContext` wiring.
+  - Updated module-level backlogs and the central assignment board to reflect the new status of `ADM-01` and `PUR-03`.
+  - Attempted to build `HERP.Administration` and `HERP.Purchasing`, but both commands stopped at restore with no code-level diagnostics because dependency restore is blocked in this environment.
+- **Result**: The first pass of "write the missing functions" is now underway with real code added to two unfinished modules: settings maintenance in `Administration` and goods receipt in `Purchasing`.
+- **Artifacts/Files**:
+  - `XAF/Modules/Administration/HERP.Administration/BusinessObjects/*.cs`
+  - `XAF/Modules/Administration/HERP.Administration/Messages/AdministrationMessageKeys.cs`
+  - `XAF/Modules/Administration/HERP.Administration/Validation/*.cs`
+  - `XAF/Modules/Purchasing/HERP.Purchasing/BusinessObjects/GoodsReceipt.cs`
+  - `XAF/Modules/Purchasing/HERP.Purchasing/BusinessObjects/GoodsReceiptLine.cs`
+  - `XAF/Modules/Purchasing/HERP.Purchasing/Messages/PurchasingMessageKeys.cs`
+  - `XAF/Modules/Purchasing/HERP.Purchasing/Validation/PurchasingValidationMessages.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `docs/module-delivery-plan.md`
+  - `XAF/Modules/Administration/NEXT_STEPS.md`
+  - `XAF/Modules/Purchasing/NEXT_STEPS.md`
+  - `XAF/Modules/Administration/REQUEST_RESULT_LOG.md`
+  - `XAF/Modules/Purchasing/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Continue the same implementation path for the next ready packages, likely `INV-01`, `SAL-01`, `FIN-01`, or `WF-01`.
+
+## 2026-03-12 10:50
+- **Request**: Continue implementing incomplete modules after finishing the first administration and purchasing slices.
+- **Context/Constraints**:
+  - `HERP.Inventory` was still empty while `INV-01` was marked ready and is a dependency-friendly backbone for warehouse-related flows.
+  - Build verification remains blocked by dependency restore in this environment.
+- **Actions Taken**:
+  - Added the inventory transaction foundation: `InventoryTransactionType`, `InventoryMessageKeys`, `InventoryValidationMessages`, `InventoryTransaction`, and `InventoryTransactionLine`.
+  - Wired the module into `HERPDbContext` with `DbSet`s, unique indexes, and cascade delete for lines.
+  - Added the missing `MasterData` project reference and module exports.
+  - Updated the assignment board and module continuity files to mark `INV-01` as done.
+  - Attempted to build `HERP.Inventory`, but the command stopped at restore with no code-level diagnostics because dependencies could not be restored.
+- **Result**: `HERP.Inventory` now has a real stock movement backbone and is no longer an empty skeleton.
+- **Artifacts/Files**:
+  - `XAF/Modules/Inventory/HERP.Inventory/Enums/InventoryTransactionType.cs`
+  - `XAF/Modules/Inventory/HERP.Inventory/Messages/InventoryMessageKeys.cs`
+  - `XAF/Modules/Inventory/HERP.Inventory/Validation/InventoryValidationMessages.cs`
+  - `XAF/Modules/Inventory/HERP.Inventory/BusinessObjects/InventoryTransaction.cs`
+  - `XAF/Modules/Inventory/HERP.Inventory/BusinessObjects/InventoryTransactionLine.cs`
+  - `XAF/Modules/Inventory/HERP.Inventory/HERP.Inventory.csproj`
+  - `XAF/Modules/Inventory/HERP.Inventory/Module.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/Modules/Inventory/NEXT_STEPS.md`
+  - `XAF/Modules/Inventory/REQUEST_RESULT_LOG.md`
+  - `docs/module-delivery-plan.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Continue the same path with `SAL-01`, `FIN-01`, or the next inventory package `INV-02`.
+
+## 2026-03-12 11:00
+- **Request**: Continue implementing incomplete modules after the first inventory backbone was added.
+- **Context/Constraints**:
+  - `HERP.Sales` was still empty while `SAL-01` was marked ready and is the natural next step after inventory and purchasing groundwork.
+  - Build verification remains blocked by dependency restore in this environment.
+- **Actions Taken**:
+  - Added the quotation baseline: `SalesMessageKeys`, `SalesValidationMessages`, `Quotation`, and `QuotationLine`.
+  - Wired the module into `HERPDbContext` with `DbSet`s, unique indexes, and cascade delete for lines.
+  - Added the missing `MasterData` project reference and module exports.
+  - Updated the assignment board and module continuity files to mark `SAL-01` as done.
+  - Attempted to build `HERP.Sales`, but the command stopped at restore with no code-level diagnostics because dependencies could not be restored.
+- **Result**: `HERP.Sales` now has its first usable document slice and is no longer an empty skeleton.
+- **Artifacts/Files**:
+  - `XAF/Modules/Sales/HERP.Sales/Messages/SalesMessageKeys.cs`
+  - `XAF/Modules/Sales/HERP.Sales/Validation/SalesValidationMessages.cs`
+  - `XAF/Modules/Sales/HERP.Sales/BusinessObjects/Quotation.cs`
+  - `XAF/Modules/Sales/HERP.Sales/BusinessObjects/QuotationLine.cs`
+  - `XAF/Modules/Sales/HERP.Sales/HERP.Sales.csproj`
+  - `XAF/Modules/Sales/HERP.Sales/Module.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/Modules/Sales/NEXT_STEPS.md`
+  - `XAF/Modules/Sales/REQUEST_RESULT_LOG.md`
+  - `docs/module-delivery-plan.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Continue with `SAL-02` or switch to `FIN-01` for the next ready financial baseline.
+
+## 2026-03-12 11:15
+- **Request**: Continue implementing incomplete modules after the first sales slice was added.
+- **Context/Constraints**:
+  - `HERP.Finance` was still empty while `FIN-01` was marked ready and is the first treasury baseline for later payment and debt flows.
+  - Build verification remains blocked by dependency restore in this environment.
+- **Actions Taken**:
+  - Added the finance baseline: `FinanceMessageKeys`, `FinanceValidationMessages`, `CashAccount`, and `BankAccount`.
+  - Wired the module into `HERPDbContext` with `DbSet`s and unique indexes.
+  - Added the missing `MasterData` project reference and module exports.
+  - Updated the assignment board and module continuity files to mark `FIN-01` as done.
+  - Attempted to build `HERP.Finance`, but the command stopped at restore with no code-level diagnostics because dependencies could not be restored.
+- **Result**: `HERP.Finance` now has its first usable treasury objects and is no longer an empty skeleton.
+- **Artifacts/Files**:
+  - `XAF/Modules/Finance/HERP.Finance/Messages/FinanceMessageKeys.cs`
+  - `XAF/Modules/Finance/HERP.Finance/Validation/FinanceValidationMessages.cs`
+  - `XAF/Modules/Finance/HERP.Finance/BusinessObjects/CashAccount.cs`
+  - `XAF/Modules/Finance/HERP.Finance/BusinessObjects/BankAccount.cs`
+  - `XAF/Modules/Finance/HERP.Finance/HERP.Finance.csproj`
+  - `XAF/Modules/Finance/HERP.Finance/Module.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/Modules/Finance/NEXT_STEPS.md`
+  - `XAF/Modules/Finance/REQUEST_RESULT_LOG.md`
+  - `docs/module-delivery-plan.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Continue with `WF-01`, `SAL-02`, or the next finance package for payments and debt tracking.
+
+## 2026-03-12 11:30
+- **Request**: Continue implementing incomplete modules after the first finance baseline was added.
+- **Context/Constraints**:
+  - `HERP.Workflow` was still empty while `WF-01` was marked ready and should remain metadata-focused before approval runtime gets added.
+  - Build verification remains blocked by dependency restore in this environment.
+- **Actions Taken**:
+  - Added the workflow metadata baseline: `WorkflowMessageKeys`, `WorkflowValidationMessages`, `WorkflowDefinition`, and `WorkflowTransition`.
+  - Wired the module into `HERPDbContext` with `DbSet`s, unique indexes, and cascade delete for transitions.
+  - Added the missing `MasterData` project reference and module exports.
+  - Updated the assignment board and module continuity files to mark `WF-01` as done.
+  - Attempted to build `HERP.Workflow`, but the command stopped at restore with no code-level diagnostics because dependencies could not be restored.
+- **Result**: `HERP.Workflow` now has a real metadata backbone and is no longer an empty skeleton.
+- **Artifacts/Files**:
+  - `XAF/Modules/Workflow/HERP.Workflow/Messages/WorkflowMessageKeys.cs`
+  - `XAF/Modules/Workflow/HERP.Workflow/Validation/WorkflowValidationMessages.cs`
+  - `XAF/Modules/Workflow/HERP.Workflow/BusinessObjects/WorkflowDefinition.cs`
+  - `XAF/Modules/Workflow/HERP.Workflow/BusinessObjects/WorkflowTransition.cs`
+  - `XAF/Modules/Workflow/HERP.Workflow/HERP.Workflow.csproj`
+  - `XAF/Modules/Workflow/HERP.Workflow/Module.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/Modules/Workflow/NEXT_STEPS.md`
+  - `XAF/Modules/Workflow/REQUEST_RESULT_LOG.md`
+  - `docs/module-delivery-plan.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Continue with approval runtime objects or switch to the next ready business slice such as `SAL-02` or `CRM-01`.
+
+## 2026-03-12 11:45
+- **Request**: Continue the sales module after the quotation baseline was in place.
+- **Context/Constraints**:
+  - `SAL-02` was the next ready package and should keep the sales chain moving from quotation to sales order.
+  - Build verification remains blocked by dependency restore in this environment.
+- **Actions Taken**:
+  - Added `SalesOrder` and `SalesOrderLine`.
+  - Extended sales validation/messages to cover quotation-to-order linkage.
+  - Wired the new types into `HERPDbContext` with `DbSet`s, unique indexes, and cascade delete for lines.
+  - Updated the assignment board and module continuity files to mark `SAL-02` as done.
+  - Attempted to build `HERP.Sales`, but the command stopped at restore with no code-level diagnostics because dependencies could not be restored.
+- **Result**: `HERP.Sales` now supports quotation-to-order progression and has two consecutive sales document slices implemented.
+- **Artifacts/Files**:
+  - `XAF/Modules/Sales/HERP.Sales/BusinessObjects/SalesOrder.cs`
+  - `XAF/Modules/Sales/HERP.Sales/BusinessObjects/SalesOrderLine.cs`
+  - `XAF/Modules/Sales/HERP.Sales/Messages/SalesMessageKeys.cs`
+  - `XAF/Modules/Sales/HERP.Sales/Validation/SalesValidationMessages.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/Modules/Sales/NEXT_STEPS.md`
+  - `XAF/Modules/Sales/REQUEST_RESULT_LOG.md`
+  - `docs/module-delivery-plan.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Continue with delivery and billing, or switch to the next ready business baseline such as `CRM-01`.
+
+## 2026-03-12 12:05
+- **Request**: Continue the sales module after sales order and implement the next ready package.
+- **Context/Constraints**:
+  - `SAL-03` was the next natural fulfillment step after `SAL-02`.
+  - Build verification remains blocked by dependency restore in this environment.
+- **Actions Taken**:
+  - Added `DeliveryNote` and `DeliveryNoteLine`.
+  - Extended sales validation/messages for delivery scenarios, including sales order and warehouse linkage.
+  - Wired the new types into `HERPDbContext` with `DbSet`s, unique indexes, and cascade delete for lines.
+  - Updated the assignment board and module continuity files to mark `SAL-03` as done.
+  - Attempted to build `HERP.Sales`, but the command stopped at restore with no code-level diagnostics because dependencies could not be restored.
+- **Result**: `HERP.Sales` now supports order-to-delivery progression and has three consecutive sales document slices implemented.
+- **Artifacts/Files**:
+  - `XAF/Modules/Sales/HERP.Sales/BusinessObjects/DeliveryNote.cs`
+  - `XAF/Modules/Sales/HERP.Sales/BusinessObjects/DeliveryNoteLine.cs`
+  - `XAF/Modules/Sales/HERP.Sales/Messages/SalesMessageKeys.cs`
+  - `XAF/Modules/Sales/HERP.Sales/Validation/SalesValidationMessages.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/Modules/Sales/NEXT_STEPS.md`
+  - `XAF/Modules/Sales/REQUEST_RESULT_LOG.md`
+  - `docs/module-delivery-plan.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Continue with billing `SAL-04`, or switch to another ready module such as `CRM-01`.
+
+## 2026-03-12 12:04
+- **Request**: Reorganize `XAF/HERP.slnx` so the solution is grouped by module under a `Modules` folder, with each module showing its three projects.
+- **Context/Constraints**:
+  - The physical repository layout already used `XAF/Modules/<Module>`, but the top-level XAF solution was too flat in the IDE.
+  - Needed to preserve existing project membership while improving solution explorer readability.
+- **Actions Taken**:
+  - Reviewed the existing `.slnx` structure and verified how solution folders are represented in XML.
+  - Rebuilt the module entries in `XAF/HERP.slnx` into `/Modules/<Module>/` folders.
+  - Corrected an auto-generated mis-grouping so `Administration`, `Base`, and `MasterData` each contain only their own three projects.
+  - Refreshed the root continuity backlog with a guardrail to keep future modules aligned with the solution folder convention.
+- **Result**: `XAF/HERP.slnx` now exposes a `Modules` tree with one folder per module, and each module folder contains exactly its three XAF projects (`Base`, `Blazor`, `Win`).
+- **Artifacts/Files**:
+  - `XAF/HERP.slnx`
+  - `docs/continuity/NEXT_STEPS.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Optionally apply the same solution-folder convention to any future aggregate solutions if you want a consistent IDE view everywhere.
+
+## 2026-03-12 14:22
+- **Request**: Fix the application errors first before continuing with new feature work.
+- **Context/Constraints**:
+  - Scope covered both XAF and MAUI solutions.
+  - The repository had multiple recent business objects added across modules, so build breakage was expected to be cross-module rather than isolated.
+  - Android build verification depends on a local Android SDK installation that is not available in this environment.
+- **Actions Taken**:
+  - Built `XAF/HERP.slnx` and `MAUI/HERP.slnx` to capture the real compiler failures.
+  - Removed unsupported `Association(...)` annotations from the EF Core business objects added in `Inventory`, `Products`, `Purchasing`, `Sales`, and `Workflow`, matching the current XAF EF Core collection-property pattern.
+  - Added missing `HERP.Products.Validation` imports to product business objects that referenced validation helpers.
+  - Updated `MAUI/HERP/HERP/HERP.csproj` to include the shared `HERP.Base/Messages/*.cs` files alongside the linked dialog helpers.
+  - Renamed the chart demo types in `DonutChartViewModel` so they no longer shadow `HERP.Domain.Data.Order`, which fixed the Web API view model compile errors.
+  - Rebuilt the solutions to verify the fixes.
+- **Result**:
+  - `XAF/HERP.slnx` now builds successfully.
+  - `MAUI/HERP/HERP/HERP.csproj -f net10.0-ios` now builds successfully.
+  - `MAUI/HERP.slnx` now fails only because the local machine does not have an Android SDK path configured (`XA5300`), not because of remaining C# compile errors.
+- **Artifacts/Files**:
+  - `XAF/Modules/Inventory/HERP.Inventory/BusinessObjects/InventoryTransaction.cs`
+  - `XAF/Modules/Inventory/HERP.Inventory/BusinessObjects/InventoryTransactionLine.cs`
+  - `XAF/Modules/Products/HERP.Products/BusinessObjects/*.cs`
+  - `XAF/Modules/Purchasing/HERP.Purchasing/BusinessObjects/GoodsReceipt.cs`
+  - `XAF/Modules/Purchasing/HERP.Purchasing/BusinessObjects/GoodsReceiptLine.cs`
+  - `XAF/Modules/Sales/HERP.Sales/BusinessObjects/*.cs`
+  - `XAF/Modules/Workflow/HERP.Workflow/BusinessObjects/WorkflowDefinition.cs`
+  - `XAF/Modules/Workflow/HERP.Workflow/BusinessObjects/WorkflowTransition.cs`
+  - `MAUI/HERP/HERP/HERP.csproj`
+  - `MAUI/HERP/HERP/ViewModels/DonutChartViewModel.cs`
+  - `docs/continuity/NEXT_STEPS.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Install/configure the Android SDK or set `AndroidSdkDirectory`, then rerun `dotnet build MAUI/HERP.slnx --no-restore -nologo`.
+  - Decide whether to clean up the remaining warnings now or after the build environment is fully configured.
+
+## 2026-03-13 11:35
+- **Request**: Analyze the legacy `document_module` spec under `docs/old_module/document_module`, inspect the current HERP BaseCode structure, and design how a new module should be implemented on top of the existing architecture without changing it.
+- **Context/Constraints**:
+  - Must read `AGENTS.md` and root continuity files first.
+  - Output must be a design document at `docs/old_module/document_module/MODULE_STRUCTURE.md`.
+  - Scope is architecture mapping only; no system architecture changes.
+- **Actions Taken**:
+  - Read `AGENTS.md`, `docs/continuity/REQUEST_RESULT_LOG.md`, `docs/continuity/NEXT_STEPS.md`, and the local XAF+MAUI bootstrap skill.
+  - Reviewed the legacy document spec in `docs/old_module/document_module/old_systemmap_document_module.md`.
+  - Inspected current XAF module structure, shell composition root, base business objects, and existing service patterns such as `HERPEFCoreDbContext`, `HERP.Module`, `HerpDocumentObject`, and `SettingProvider`.
+  - Reworked `docs/old_module/document_module/MODULE_STRUCTURE.md` to map the legacy Document workflow into the existing BaseCode structure.
+- **Result**: The repository now has a concrete implementation blueprint for a future `Document` module that fits the current XAF module pattern, identifies available layers, and maps entities, services, controllers, and host wiring without introducing a new architecture.
+- **Artifacts/Files**:
+  - `docs/old_module/document_module/MODULE_STRUCTURE.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Decide the final public naming for the aggregate root (`Video` vs a renamed document-centric root) before scaffolding the actual module.
+  - Confirm whether `Language` should stay inside `Document` or be promoted later into a shared module if other bounded contexts need it.
+
+## 2026-03-13 11:50
+- **Request**: Fix the broken Vietnamese encoding in `docs/old_module/document_module/MODULE_STRUCTURE.md`.
+- **Context/Constraints**:
+  - The file content had become mojibake after a previous quick normalization pass.
+  - The fix needed to be the simplest safe repair without changing the document structure.
+- **Actions Taken**:
+  - Inspected the file content and byte output to confirm this was real double-encoded text, not only a terminal display issue.
+  - Rewrote `docs/old_module/document_module/MODULE_STRUCTURE.md` with proper Vietnamese Unicode content.
+  - Verified the repaired file by reading it back with UTF-8 decoding.
+- **Result**: `MODULE_STRUCTURE.md` now contains proper Vietnamese text again and is readable as a normal UTF-8 Markdown document.
+- **Artifacts/Files**:
+  - `docs/old_module/document_module/MODULE_STRUCTURE.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - None specific to this encoding repair.
+
+## 2026-03-13 12:20
+- **Request**: Read `docs/old_module/document_module/MODULE_STRUCTURE.md` and `docs/old_module/document_module/specs/*.md`, then create an ordered implementation plan at `docs/old_module/document_module/IMPLEMENTATION_PLAN.md`.
+- **Context/Constraints**:
+  - Must follow `AGENTS.md` continuity workflow.
+  - Output needed to list tasks in implementation order, and each task must include objective, files to create, and dependencies.
+  - Scope is planning/documentation only; no module code scaffold yet.
+- **Actions Taken**:
+  - Read the root continuity files and the local ERP bootstrap skill before planning.
+  - Reviewed `docs/old_module/document_module/MODULE_STRUCTURE.md` and the legacy spec in `docs/old_module/document_module/specs/document_spec.md`.
+  - Consolidated the module into phased work packages covering scaffold, host wiring, core entities, content/layout, terminology, translation/configuration, integration, services, controllers, and tests.
+  - Created `docs/old_module/document_module/IMPLEMENTATION_PLAN.md` and refreshed the root backlog to point the next session to this plan.
+- **Result**: The repository now has a concrete execution plan for the `Document` module, with task order, target files, and inter-task dependencies clear enough to start scaffolding.
+- **Artifacts/Files**:
+  - `docs/old_module/document_module/IMPLEMENTATION_PLAN.md`
+  - `docs/continuity/NEXT_STEPS.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+- **Open Items**:
+  - Confirm the final aggregate root naming before implementing Task 3.
+  - Start Task 1 and Task 2 from the new plan when moving from planning to code.
+## 2026-03-13 19:35
+- **Request**: Implement the new `Document` module from the legacy `document_module` plan on top of the current BaseCode, then check code and remove obvious duplication.
+- **Context/Constraints**:
+  - Must read continuity docs and preserve the XAF module architecture.
+  - Keep BaseCode changes limited to shell wiring and shared persistence entry points required by the new module.
+  - Separate document domain logic from infrastructure/persistence concerns.
+- **Actions Taken**:
+  - Scaffolded `XAF/Modules/Document` with base, Win, and Blazor projects plus module continuity files.
+  - Implemented the planned domain objects for core document, content/layout, terminology, translation, configuration, and integration areas.
+  - Added validation/messages, contracts, services, controllers, `DocumentModelBuilder`, test scaffold, and migration/measurement docs.
+  - Wired the new module into `HERP.Module`, `HERP.Win`, `HERP.Blazor.Server`, `HERP.slnx`, and `HERPEFCoreDbContext`.
+  - Attempted to build the new module, but this environment could not complete restore/project-assets generation for the new project.
+- **Result**: A first working `Document` module foundation now exists in the repo and follows the existing XAF module pattern with persistence mapping separated into a dedicated model builder.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/*`
+  - `XAF/HERP/HERP.Module/Module.cs`
+  - `XAF/HERP/HERP.Win/WinModule.cs`
+  - `XAF/HERP/HERP.Blazor.Server/BlazorModule.cs`
+  - `XAF/HERP/HERP.Module/HERP.Module.csproj`
+  - `XAF/HERP/HERP.Win/HERP.Win.csproj`
+  - `XAF/HERP/HERP.Blazor.Server/HERP.Blazor.Server.csproj`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/HERP.slnx`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/*`
+  - `docs/old_module/document_module/MIGRATION_CHECKLIST.md`
+  - `docs/old_module/document_module/MEASUREMENT_PLAN.md`
+- **Open Items**:
+  - Complete restore/build verification on a developer machine with working package access.
+  - Replace current default stub adapters with real import/translation/integration implementations.
+  - Refine workflow/UI actions after the first runtime validation round.
+## 2026-03-13 20:05
+- **Request**: Add navigation for the new `Document` module.
+- **Context/Constraints**:
+  - The module already existed but had no clear grouped navigation surface for users.
+- **Actions Taken**:
+  - Reworked `NavigationItem` annotations for Document business objects into explicit feature groups.
+- **Result**: The new module now has grouped XAF navigation sections for core records, content/layout, terminology, translation, and configuration.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/**/*.cs`
+- **Open Items**:
+  - Validate menu order and visibility in the running app after build/restore succeeds.
+## 2026-03-13 20:20
+- **Request**: Check where the `Document` module object model is defined and populate the module model file because it was empty.
+- **Context/Constraints**:
+  - Keep the implementation aligned with the existing XAF/BaseCode pattern.
+  - Prefer module-owned model metadata over shell-level overrides for module-specific objects.
+- **Actions Taken**:
+  - Reviewed the current XAF model placement across the shell and existing modules.
+  - Confirmed most Document object metadata was coming from business object attributes at runtime.
+  - Added explicit `BOModel` entries and view captions to `XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml`.
+- **Result**: The new Document module now has a concrete module-level XAF model file instead of an effectively empty placeholder.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml`
+- **Open Items**:
+  - Validate runtime captions/layouts after restore/build works on a developer machine.
+## 2026-03-13 20:40
+- **Request**: Investigate why the `Document` business navigation still does not appear at runtime and fix it.
+- **Context/Constraints**:
+  - The module already had business objects and navigation attributes, so the likely issue was module loading/composition rather than missing entities.
+  - Keep the fix aligned with the repository's standard feature-module loading approach.
+- **Actions Taken**:
+  - Reviewed startup/module registration in Win and Blazor plus the shared `OptionalModuleLoader`.
+  - Moved `Document` onto the same optional feature-module loading path used by the repository's other business modules.
+  - Added platform-to-core module dependency inside the Document Win/Blazor modules.
+  - Removed the earlier shell-level direct `RequiredModuleTypes` wiring for Document.
+- **Result**: `Document` is now composed like the other feature modules, reducing the risk that it is skipped by runtime module discovery and therefore absent from navigation.
+- **Artifacts/Files**:
+  - `XAF/HERP/HERP.Module/OptionalModuleLoader.cs`
+  - `XAF/HERP/HERP.Module/Module.cs`
+  - `XAF/HERP/HERP.Win/WinModule.cs`
+  - `XAF/HERP/HERP.Blazor.Server/BlazorModule.cs`
+  - `XAF/Modules/Document/HERP.Document.Win/WinModule.cs`
+  - `XAF/Modules/Document/HERP.Document.Blazor/BlazorModule.cs`
+- **Open Items**:
+  - Validate runtime navigation visibility.
+  - If the target account is not administrative and Document is still hidden, seed explicit role permissions for Document navigation/object types.
+## 2026-03-13 21:00
+- **Request**: Continue investigating because the `Document` navigation still did not appear even for an admin account.
+- **Context/Constraints**:
+  - The runtime symptom affected more than one business navigation area, which strongly pointed to a persisted model/navigation issue.
+  - Prefer a code-based correction over asking the user to manually edit DB rows.
+- **Actions Taken**:
+  - Added explicit module-owned `NavigationItems` for the Document menu tree.
+  - Added a runtime cleanup in `HERP.Module` to remove obsolete persisted navigation model-difference aspects that still reflect the old app navigation and hide new modules.
+- **Result**: The application now actively rebuilds stale navigation customizations and no longer depends only on auto-generated navigation for the Document module.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml`
+  - `XAF/HERP/HERP.Module/Module.cs`
+- **Open Items**:
+  - Verify the next login/run refreshes the visible navigation.
+  - If needed, inspect/clear persisted model differences directly in the target DB.
+## 2026-03-13 21:15
+- **Request**: Fix the SQL Server schema error raised at login for admin `admin@habao.com.vn`: `FK_Audios_Videos_VideoId` may cause cycles or multiple cascade paths.
+- **Context/Constraints**:
+  - The failure occurred during schema creation/update, before the user could validate navigation.
+  - The fix should preserve the Document domain model and minimize changes outside persistence mapping.
+- **Actions Taken**:
+  - Reviewed the Document EF delete graph.
+  - Replaced the direct `Video` cascade relationships with `SetNull` on nullable child foreign keys.
+  - Refactored the `Video` relationship setup into a dedicated helper inside `DocumentModelBuilder`.
+- **Result**: The Document module now avoids a SQL Server multiple-cascade-path configuration rooted at `Video`.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/Persistence/DocumentModelBuilder.cs`
+- **Open Items**:
+  - Rerun the application/schema update and watch for the next constraint error, if any.
+## 2026-03-13 21:30
+- **Request**: Continue investigating because other business areas appeared, but `Document` still did not.
+- **Context/Constraints**:
+  - The runtime symptom became Document-specific after `Master Data` appeared again.
+  - Prefer aligning `Document` with the proven shell registration path before deeper debugging.
+- **Actions Taken**:
+  - Reverted `Document` from reflective optional loading back to direct shell `RequiredModuleTypes` registration in core, Win, and Blazor shell modules.
+  - Removed `Document` from `OptionalModuleLoader` so the module no longer depends on reflective discovery.
+- **Result**: `Document` now follows the same fixed registration path as the visible built-in business modules.
+- **Artifacts/Files**:
+  - `XAF/HERP/HERP.Module/Module.cs`
+  - `XAF/HERP/HERP.Win/WinModule.cs`
+  - `XAF/HERP/HERP.Blazor.Server/BlazorModule.cs`
+  - `XAF/HERP/HERP.Module/OptionalModuleLoader.cs`
+- **Open Items**:
+  - Re-run the app and verify the Document group.
+  - If still missing, inspect build output / persisted navigation model state.
+## 2026-03-13 21:45
+- **Request**: Reduce the `Document` module to a single navigation group and expose only the main business objects based on the legacy module documents.
+- **Context/Constraints**:
+  - The menu should represent business entry points, not every supporting table/entity.
+  - The main objects needed to be derived from the documented workflows.
+- **Actions Taken**:
+  - Re-evaluated the Document spec/workflows and selected `Folder`, `Video`, `Dictionary`, `Language`, and `DataService` as the main top-level objects.
+  - Simplified the Document model to a single navigation group containing only those views.
+  - Aligned the corresponding class-level navigation metadata for the five main objects.
+- **Result**: The Document module navigation definition is now intentionally minimal and business-oriented instead of exposing the full internal object graph.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Video.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Folder.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Terminology/Dictionary.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Configuration/Language.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Configuration/DataService.cs`
+- **Open Items**:
+  - Verify runtime visibility and suppress any remaining secondary navigation nodes if XAF still auto-generates them from class attributes.
+## 2026-03-13 22:00
+- **Request**: Investigate why old navigation entries still appeared and why the chosen main objects for `Document` were not yet accurate.
+- **Context/Constraints**:
+  - A model-only override was not enough while class-level navigation attributes on secondary entities still existed.
+  - The target UX rule is one module-level navigation group with only the primary business entry points.
+- **Actions Taken**:
+  - Removed class-level navigation metadata from the secondary Document entities.
+  - Reduced the top-level Document menu to four main objects: `Folder`, `Video`, `Dictionary`, and `DataService`.
+- **Result**: The Document module no longer advertises its internal support entities as top-level navigation items in source metadata.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/**/*.cs`
+  - `XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml`
+- **Open Items**:
+  - Verify the next app run reflects the cleaned navigation metadata.
+## 2026-03-13 22:20
+- **Request**: Rename the `Audio` business object to `Element` and update the related code.
+- **Context/Constraints**:
+  - The rename needed to be domain-wide across entity names, EF relationships, services, and tests.
+  - Scope was code-first; legacy documentation can be aligned afterwards if needed.
+- **Actions Taken**:
+  - Renamed the Document content entity and associated editing controller/service to `Element`.
+  - Updated all code references in the Document module and its tests, including `DbContext`, EF mappings, navigation model metadata, and service workflows.
+- **Result**: The Document module source now models the primary content unit as `Element` instead of `Audio`.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/**/*.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/**/*.cs`
+- **Open Items**:
+  - Optionally align legacy planning/spec docs with the new `Element` terminology.
+  - Validate runtime/build once the environment allows full verification.
+
+## 2026-03-13 15:55
+- **Request**: Exclude temporary files from Git based on `.gitignore`, then push only the necessary project changes.
+- **Context/Constraints**:
+  - A previous snapshot commit included tracked `.vs`, `obj`, `bin`, and `.dotnet` telemetry artifacts.
+  - The fix needed to preserve local files while removing temporary artifacts from repository history going forward.
+- **Actions Taken**:
+  - Reviewed the current `.gitignore` and confirmed Visual Studio/build outputs were already ignored, but previously tracked artifacts still needed index cleanup.
+  - Added `.dotnet/` to `.gitignore` to cover local SDK telemetry/cache files.
+  - Removed tracked temporary files from the Git index with `git rm --cached`, covering `.vs`, `obj`, `bin`, and `.dotnet/.dotnet/TelemetryStorageService`.
+- **Result**: The repo is prepared for a corrective commit that keeps business/source changes while dropping temporary IDE/build/telemetry artifacts from version control.
+- **Artifacts/Files**:
+  - `.gitignore`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+- **Open Items**:
+  - Create the cleanup commit and push `main` to `origin`.
+## 2026-03-13 16:10
+- **Request**: Act as QA engineer for the new `Document` module: compare the legacy spec and old ENTOSDocument behavior, identify important workflows, and add unit/service/business-rule tests under `tests/<module>`.
+- **Context/Constraints**:
+  - Must read continuity files first and preserve session traceability.
+  - Validation target is behavioral parity with the legacy Document workflows, not only compile-time coverage.
+  - Local test execution depends on the current .NET SDK/MSBuild environment being able to restore the module graph.
+- **Actions Taken**:
+  - Reviewed `docs/old_module/document_module/specs/document_spec.md`, the current `XAF/Modules/Document` source, and the legacy `D:\Code\ENTOSDocument` services/controllers to extract the core workflows.
+  - Added shared test data builders plus new test coverage for bookmark import, element editing, folder hierarchy/path rebuilding, dictionary sync, translate-object HTML import/export, and entity validation rules.
+  - Strengthened existing workflow/integration tests for draft-submit-publish transitions, ordered batch translation, line-to-element translation application, terminology deduplication/location tracking, and external object traceability.
+  - Attempted to run `dotnet test`, but restore is currently blocked by the local .NET/MSBuild environment before the test project can compile.
+- **Result**: The `Document` test suite now covers the main legacy workflows and business rules in three groups: unit/service/business-rule tests. Runtime verification is still pending on a developer machine or fixed SDK environment because restore/test execution is blocked locally.
+- **Artifacts/Files**:
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/DocumentTestData.cs`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/Services/DocumentImportServiceTests.cs`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/Services/ElementEditingServiceTests.cs`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/Services/FolderServiceTests.cs`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/Services/DictionaryServiceTests.cs`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/Services/TranslateObjectServiceTests.cs`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/BusinessObjects/DocumentBusinessRuleTests.cs`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/Services/DocumentWorkflowServiceTests.cs`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/Services/BatchTranslationServiceTests.cs`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/Services/TerminologyExtractionServiceTests.cs`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/Integration/DocumentModuleFlowTests.cs`
+- **Open Items**:
+  - Fix the local `dotnet restore` / MSBuild workload resolver issue, then run the Document test project and address any compile/runtime failures.
+  - Expand parity checks further once real parser/translation/data-service adapters replace the current stubs.
+## 2026-03-13 16:20
+- **Request**: Write a reusable script to run the `Document` module test suite.
+- **Context/Constraints**:
+  - The script should encapsulate the local `.NET` environment variables already needed for the Document test project.
+  - Keep it easy to run from future sessions.
+- **Actions Taken**:
+  - Added `scripts/run-document-tests.ps1` to set `DOTNET_CLI_HOME`, disable first-time experience/telemetry, disable the workload resolver, and run `dotnet restore` + `dotnet test` for the Document test project.
+  - Added switches for `-NoRestore` and `-VerboseRestore`.
+  - Performed a light execution check by invoking the script with `-NoRestore`.
+- **Result**: The repository now has a single-command PowerShell entry point for the Document test suite.
+- **Artifacts/Files**:
+  - `scripts/run-document-tests.ps1`
+- **Open Items**:
+  - Run the script on a machine with a working restore environment and address any actual test failures.
+## 2026-03-13 16:30
+- **Request**: Fix the `NU1015` restore failure for the Document test script.
+- **Context/Constraints**:
+  - The Document test project lives outside the `XAF` folder, so it does not inherit the central package versions from `XAF\Directory.Packages.props`.
+- **Actions Taken**:
+  - Confirmed the missing versions were for `coverlet.collector`, `Microsoft.NET.Test.Sdk`, `xunit`, and `xunit.runner.visualstudio`.
+  - Copied the current central versions from `XAF\HERP\Directory.packages.props` into the test project file explicitly.
+- **Result**: `HERP.Document.Tests.csproj` no longer depends on central package management to resolve its test package versions, so the earlier `NU1015` restore error should be cleared.
+- **Artifacts/Files**:
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/HERP.Document.Tests.csproj`
+- **Open Items**:
+  - Re-run the Document test script and handle the next restore/build/test issue if any remains.
+## 2026-03-13 16:40
+- **Request**: Re-run the new Document test runner after fixing the missing package versions and confirm the result.
+- **Context/Constraints**:
+  - Previous failure was `NU1015` during restore.
+  - The goal was to verify the new QA suite actually executes.
+- **Actions Taken**:
+  - Re-ran `scripts/run-document-tests.ps1` after pinning explicit test package versions.
+  - Verified xUnit discovery/execution completed successfully.
+- **Result**: `HERP.Document.Tests` passed `25/25` tests on `net10.0` in 8.4s. Build succeeded, though the solution still emitted 271 warnings that were not addressed in this QA task.
+- **Artifacts/Files**:
+  - `scripts/run-document-tests.ps1`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/*`
+- **Open Items**:
+  - Review and prioritize the 271 build warnings.
+  - Add deeper adapter-backed parity tests once real import/translation providers are wired.
+## 2026-03-13 16:54
+- **Request**: Migrate legacy `ENTOSDocument` object icons from `HERP/Images` into the new HERP `Document` module and rename them to match the new object names.
+- **Context/Constraints**:
+  - Must follow the current HERP/XAF image-display mechanism rather than hard-coding UI-specific image loading.
+  - Scope is limited to the new `Document` module.
+- **Actions Taken**:
+  - Reviewed the current XAF image pattern in HERP (`[ImageName]` plus embedded resources in `Images` folders).
+  - Updated Document business objects to use module-owned image names instead of generic DevExpress stock icons.
+  - Copied and renamed the mapped legacy assets into `XAF/Modules/Document/HERP.Document/Images` and embedded them through the Document project file.
+  - Added explicit icon assignments for the main Document navigation items in the module XAF model.
+  - Attempted local build validation, but the current environment still reports a failed no-restore build without a concrete compiler diagnostic.
+- **Result**: The Document module now contains its own legacy-derived icon pack aligned to the new HERP object names and wired through the same XAF resource mechanism used by the application.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/Images/*`
+  - `XAF/Modules/Document/HERP.Document/HERP.Document.csproj`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/**/*.cs`
+  - `XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml`
+- **Open Items**:
+  - Validate icon rendering in a running app.
+  - Investigate why the local `dotnet build --no-restore` ends in `Build FAILED` with `0 Error(s)` in this environment.
+## 2026-03-16 09:01
+- **Request**: Standardize the new `Document` module icons to XAF-friendly raster sizes.
+- **Context/Constraints**:
+  - Base raster icons should be `16x16`.
+  - Additional size variants should follow the XAF image-pack naming style.
+- **Actions Taken**:
+  - Added a reusable icon-sync script that regenerates the Document module icons from the legacy source asset folder.
+  - Replaced the large imported PNGs in `XAF/Modules/Document/HERP.Document/Images` with `16x16` base icons and generated `_8x8`, `_12x12`, `_24x24`, `_32x32`, and `_48x48` variants.
+  - Verified the generated raster outputs match the requested dimensions.
+- **Result**: The Document module now carries an XAF-sized raster icon pack instead of only the original large legacy PNG files.
+- **Artifacts/Files**:
+  - `scripts/sync-document-icons.ps1`
+  - `XAF/Modules/Document/HERP.Document/Images/*`
+- **Open Items**:
+  - Validate runtime icon selection in the app.
+  - Decide whether `Folder.svg` also needs raster fallback generation later.
+## 2026-03-16 10:35
+- **Request**: Ensure the Video object displays as Video in the XAF model instead of Document.
+- **Context/Constraints**:
+  - Only adjust XAF model / presentation metadata for the Document module.
+  - Keep the module top-level navigation group named Document.
+- **Actions Taken**:
+  - Reviewed the Document module XAF model and the Video business object metadata.
+  - Changed the Video BOModel caption from Document to Video.
+  - Renamed the Video navigation item caption from Documents to Videos.
+  - Renamed Video_ListView and Video_DetailView captions to Videos and Video.
+  - Updated the default Video object name from New Document to New Video.
+- **Result**: The Video object now exposes Video/Videos display text consistently in the module model instead of Document/Documents.
+- **Artifacts/Files**:
+  - XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Video.cs
+- **Open Items**:
+  - Run the app and clear any persisted model-difference cache if old captions still appear at runtime.
+
+## 2026-03-16 09:25
+- **Request**: Push the current project state to Git.
+- **Context/Constraints**:
+  - The working tree contained a new batch of `Document` module changes spanning captions, icon assets, scripts, docs, and tests.
+  - Avoid committing local CLI cache folders such as `.dotnet-cli`.
+- **Actions Taken**:
+  - Reviewed the current Git status and inspected the newly added folders/scripts before publishing.
+  - Confirmed the repository-level `Images` folder is a source asset folder used by `scripts/sync-document-icons.ps1`.
+  - Added `.dotnet-cli/` to `.gitignore` so local CLI-home/cache files remain untracked.
+- **Result**: The repository is prepared for a clean commit/push of the current `Document` work without including `.dotnet-cli` cache files.
+- **Artifacts/Files**:
+  - `.gitignore`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+  - `XAF/Modules/Document/REQUEST_RESULT_LOG.md`
+  - `XAF/Modules/Document/NEXT_STEPS.md`
+- **Open Items**:
+  - Commit and push the current working tree to `origin/main`.
+
+## 2026-03-16 11:20
+- **Request**: Read the legacy `ENTITY_UI_METADATA.md`, inspect current HERP entities, and create a metadata-mapping document for a downstream CodeAgent without writing implementation code.
+- **Context/Constraints**:
+  - Output must be mapping data only.
+  - Need explicit `OK`, `NOT_FOUND`, and `AMBIGUOUS` cases so metadata generation does not rely on hidden inference.
+- **Actions Taken**:
+  - Reviewed the legacy metadata extract under `docs/old_module/document_module/ENTITY_UI_METADATA.md`.
+  - Inspected the current `Document`, `Base`, `Administration`, and `MasterData` business objects in HERP.
+  - Authored `docs/old_module/document_module/METADATA_MAPPING.md` with entity mapping, field mapping, metadata mapping, default logic notes, missing fields, and warnings.
+- **Result**: The repository now contains a metadata-mapping artifact that can be used as the canonical input when a CodeAgent starts applying XAF/UI metadata onto the current HERP entities.
+- **Artifacts/Files**:
+  - `docs/old_module/document_module/METADATA_MAPPING.md`
+  - `docs/continuity/REQUEST_RESULT_LOG.md`
+  - `docs/continuity/NEXT_STEPS.md`
+  - `XAF/Modules/Document/REQUEST_RESULT_LOG.md`
+  - `XAF/Modules/Document/NEXT_STEPS.md`
+- **Open Items**:
+  - Validate the ambiguous mappings with the business owner before applying generated metadata broadly.
+## 2026-03-16 13:05
+- **Request**: Apply legacy XAF UI metadata onto the current Document entities without recreating entities or changing architecture.
+- **Context/Constraints**:
+  - Read docs/old_module/document_module/ENTITY_UI_METADATA.md, docs/old_module/document_module/METADATA_MAPPING.md, and AGENTS.md first.
+  - Only add UI metadata and safe default-related behavior; do not touch repositories, services, relationships, or entity types.
+  - Avoid duplicate attributes and keep current business logic intact.
+- **Actions Taken**:
+  - Resolved the mapped Document entities and compared legacy field metadata against the current HERP source model.
+  - Added XAF presentation metadata (ModelDefault, VisibleInListView, VisibleInDetailView) directly on resolved properties and, where the target field lives in a base class, on safe per-entity overrides.
+  - Added required-field validation rules only where the target property is declared on the entity and the legacy metadata clearly marks it as required (Element.StartTime, Term.SourceTerm).
+  - Kept existing constructor/property-initializer defaults as the active default logic because the resolved defaults were already implemented in source; no extra AfterConstruction override was added to avoid duplicating behavior.
+  - Normalized the touched source files back to CRLF and ran dotnet build --no-restore with a workspace-local DOTNET_CLI_HOME to smoke-test the module.
+- **Result**: The current Document entities now carry legacy-aligned UI captions, visibility, and ordering metadata in code, while preserving the existing domain model and default behavior.
+- **Artifacts/Files**:
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Content/Element.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Integration/BookMark.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Configuration/DataService.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Terminology/Dictionary.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Folder.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Configuration/Language.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Layout/ParagraphStyle.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Terminology/Term.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Integration/TranslateObject.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Video.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Configuration/Voice.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Terminology/Word.cs
+- **Open Items**:
+  - Validate the metadata in a running Win/Blazor shell because persisted model differences may still override code-level attributes.
+  - Confirm whether any remaining ambiguous mappings from METADATA_MAPPING.md should also be applied or intentionally left out.

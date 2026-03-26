@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application Title="HERP.Document">
+  <BOModel>
+    <!-- Visible in navigation -->
+    <Class Name="HERP.Document.BusinessObjects.Video" Caption="Video" IsVisibleInNavigation="True" />
+    <Class Name="HERP.Document.BusinessObjects.Folder" Caption="Folder" IsVisibleInNavigation="True" />
+    <Class Name="HERP.Document.BusinessObjects.Dictionary" Caption="Từ điển" IsVisibleInNavigation="True" />
+    <Class Name="HERP.Document.BusinessObjects.DataService" Caption="Data Service" IsVisibleInNavigation="True" />
+    <Class Name="HERP.Document.BusinessObjects.Word" Caption="Từ vựng" IsVisibleInNavigation="True" />
+    <Class Name="HERP.Document.BusinessObjects.WordNoSign" Caption="Từ không dấu" IsVisibleInNavigation="True" />
+    <Class Name="HERP.Document.BusinessObjects.SpellingWord" Caption="Phiên âm" IsVisibleInNavigation="True" />
+    <Class Name="HERP.Document.BusinessObjects.Voice" Caption="Giọng đọc" IsVisibleInNavigation="True" />
+    <Class Name="HERP.Document.BusinessObjects.Language" Caption="Ngôn ngữ" IsVisibleInNavigation="True" />
+
+    <!-- Hidden -->
+    <Class Name="HERP.Document.BusinessObjects.Element" Caption="Element" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.Paragraph" Caption="Paragraph" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.ParagraphStyle" Caption="Paragraph Style" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.Media" Caption="Media" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.Term" Caption="Term" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.TermLocation" Caption="Term Location" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.TermLocationCorrection" Caption="Term Location Correction" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.TermCorrection" Caption="Term Correction" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.DictionaryWord" Caption="Dictionary Word" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.LanguageSpelling" Caption="Language Spelling" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.CorrectionOption" Caption="Correction Option" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.TranslateWord" Caption="Translate Word" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.ElementBatch" Caption="Element Batch" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.BatchTranslate" Caption="Batch Translation" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.ElementTranslate" Caption="Element Translation" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.DataServiceParameter" Caption="Data Service Parameter" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.SoftwareServiceType" Caption="Software Service Type" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.TranslateObject" Caption="Translate Object" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.ObjectRelation" Caption="Object Relation" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.BookMark" Caption="Bookmark" IsVisibleInNavigation="False" />
+    <Class Name="HERP.Document.BusinessObjects.ExceptionWord" Caption="Từ phi thuật" IsVisibleInNavigation="True" />
+    <Class Name="HERP.Document.BusinessObjects.GoogleKey" Caption="Google Key" IsVisibleInNavigation="True" />
+    <Class Name="HERP.Document.BusinessObjects.DataServiceLog" Caption="Log dịch vụ" IsVisibleInNavigation="False" />
+  </BOModel>
+  <NavigationItems>
+    <Items>
+      <Item Id="Document" Caption="Document" ImageName="Video">
+        <Items>
+          <Item Id="Document_Folders"      View="Folder_ListView"      Caption="Folders"      ImageName="Folder" />
+          <Item Id="Document_Videos"       View="Video_ListView"        Caption="Videos"       ImageName="Video" />
+          <Item Id="Document_Dictionaries" View="Dictionary_ListView"   Caption="Từ điển"      ImageName="Dictionary" />
+          <Item Id="Document_Words"        View="Word_ListView"         Caption="Từ vựng"      ImageName="BO_List" />
+          <Item Id="Document_WordNoSigns"  View="WordNoSign_ListView"   Caption="Từ không dấu" ImageName="BO_List" />
+          <Item Id="Document_Spellings"    View="SpellingWord_ListView" Caption="Phiên âm"     ImageName="BO_List" />
+          <Item Id="Document_Voices"       View="Voice_ListView"        Caption="Giọng đọc"    ImageName="BO_List" />
+          <Item Id="Document_Languages"    View="Language_ListView"     Caption="Ngôn ngữ"     ImageName="Language" />
+          <Item Id="Document_ExceptionWords"  View="ExceptionWord_ListView" Caption="Từ phi thuật" ImageName="BO_List" />
+          <Item Id="Document_GoogleKeys"      View="GoogleKey_ListView"     Caption="Google Key"   ImageName="BO_List" />
+          <Item Id="Document_DataServices"    View="DataService_ListView"   Caption="Data Services" ImageName="DataService" />
+        </Items>
+      </Item>
+    </Items>
+  </NavigationItems>
+  <Views>
+    <ListView Id="Video_ListView"        Caption="Videos" />
+    <DetailView Id="Video_DetailView"    Caption="Video" />
+    <ListView Id="Folder_ListView"       Caption="Folders" />
+    <ListView Id="Dictionary_ListView"   Caption="Từ điển" />
+    <ListView Id="Word_ListView"         Caption="Từ vựng" />
+    <ListView Id="WordNoSign_ListView"   Caption="Từ không dấu" />
+    <ListView Id="SpellingWord_ListView" Caption="Phiên âm" />
+    <ListView Id="Voice_ListView"        Caption="Giọng đọc" />
+    <ListView Id="Language_ListView"     Caption="Ngôn ngữ" />
+    <ListView Id="ExceptionWord_ListView" Caption="Từ phi thuật" />
+    <ListView Id="GoogleKey_ListView"     Caption="Google Key" />
+    <ListView Id="DataService_ListView"   Caption="Data Services" />
+  </Views>
+</Application>

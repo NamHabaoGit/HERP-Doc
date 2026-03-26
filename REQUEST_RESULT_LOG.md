@@ -1,0 +1,600 @@
+﻿# Request & Result Log
+
+## 2026-03-13 13:30
+- **Request**: Implement the new `Document` module from the legacy spec and implementation plan using the current BaseCode architecture.
+- **Context/Constraints**:
+  - Keep code inside `Modules/Document`.
+  - Do not change BaseCode unless wiring truly requires it.
+- **Actions Taken**:
+  - Scaffolded the `HERP.Document`, `HERP.Document.Win`, and `HERP.Document.Blazor` projects.
+  - Added initial module continuity files.
+- **Result**: The Document module now has a proper XAF skeleton aligned with the repository's module pattern.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/*`
+- **Open Items**:
+  - Add domain objects, services, controllers, persistence mapping, tests, and shell wiring.
+## 2026-03-13 19:35
+- **Request**: Implement the `Document` module from the legacy spec inside `XAF/Modules/Document` and keep BaseCode changes minimal.
+- **Context/Constraints**:
+  - Follow the old `document_module` implementation plan.
+  - Keep domain logic in entities/services and persistence in EF mapping.
+- **Actions Taken**:
+  - Added the `HERP.Document`, `HERP.Document.Win`, and `HERP.Document.Blazor` projects.
+  - Implemented document domain entities, validation/messages, services, controllers, EF model mapping, tests, and migration/performance docs.
+  - Wired the module into the XAF shell projects, solution file, and `HERPEFCoreDbContext`.
+- **Result**: The repository now contains a concrete `Document` module foundation aligned with the existing XAF module architecture.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/*`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/*`
+  - `docs/old_module/document_module/MIGRATION_CHECKLIST.md`
+  - `docs/old_module/document_module/MEASUREMENT_PLAN.md`
+- **Open Items**:
+  - Run a full restore/build on a developer machine; current environment cannot generate `project.assets.json` for the new project.
+  - Replace default parser/translation/html executor stubs with real adapters.
+## 2026-03-13 20:05
+- **Request**: Add navigation for the new `Document` module.
+- **Context/Constraints**:
+  - Keep the new module aligned with XAF navigation conventions.
+  - Do not change shell architecture more than necessary.
+- **Actions Taken**:
+  - Updated `NavigationItem` paths across Document business objects.
+  - Grouped navigation into `Document/Core`, `Document/Content`, `Document/Terminology`, `Document/Translation`, and `Document/Configuration`.
+- **Result**: The Document module now exposes a structured navigation tree instead of a single flat bucket.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/**/*.cs`
+- **Open Items**:
+  - Validate the final menu ordering in a running app once restore/build is available.
+## 2026-03-13 20:20
+- **Request**: Check where the `Document` module object model is defined and populate the module model file because it was empty.
+- **Context/Constraints**:
+  - Keep the implementation aligned with the existing XAF/BaseCode pattern.
+  - Avoid moving model concerns into the shell unless the module truly needs shared overrides.
+- **Actions Taken**:
+  - Reviewed the shell and existing module `Model.DesignedDiffs.xafml` files to identify where explicit XAF model customizations currently live.
+  - Confirmed the Document objects already expose most metadata through class attributes and runtime BOModel generation.
+  - Populated `HERP.Document/Model.DesignedDiffs.xafml` with explicit `BOModel` class captions and key list/detail view captions for the Document module objects.
+- **Result**: The `Document` module now carries its own non-empty XAF model metadata instead of relying only on runtime attributes and the shell model.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml`
+- **Open Items**:
+  - Validate the final captions and any additional layout overrides in a running XAF app once restore/build is available.
+## 2026-03-13 20:40
+- **Request**: Investigate why the `Document` business navigation still does not appear at runtime and fix it.
+- **Context/Constraints**:
+  - The module was already scaffolded and had `NavigationItem` attributes, but the app still did not surface the Document navigation tree.
+  - Keep the fix aligned with the repository's feature-module loading pattern.
+- **Actions Taken**:
+  - Reviewed XAF startup/module loading and compared the `Document` wiring with the repository's existing optional feature-module discovery flow.
+  - Identified that `Document` had been wired differently from other feature modules: it relied on shell `RequiredModuleTypes` instead of the `OptionalModuleLoader` path used by this codebase.
+  - Added `Document` core/win/blazor module types to `HERP.Module/OptionalModuleLoader.cs`.
+  - Removed the shell-level hard dependency entries for `Document` from `HERP.Module`, `HERP.Win`, and `HERP.Blazor.Server`.
+  - Added explicit `RequiredModuleTypes.Add(typeof(HERP.Document.HERPDocumentModule))` to the Document platform modules so each platform module now correctly pulls in its core module.
+- **Result**: The `Document` module now follows the same runtime discovery/composition pattern as the other feature modules, which should allow its navigation and object types to surface correctly when the app loads the module set.
+- **Artifacts/Files**:
+  - `XAF/HERP/HERP.Module/OptionalModuleLoader.cs`
+  - `XAF/HERP/HERP.Module/Module.cs`
+  - `XAF/HERP/HERP.Win/WinModule.cs`
+  - `XAF/HERP/HERP.Blazor.Server/BlazorModule.cs`
+  - `XAF/Modules/Document/HERP.Document.Win/WinModule.cs`
+  - `XAF/Modules/Document/HERP.Document.Blazor/BlazorModule.cs`
+- **Open Items**:
+  - Run the app and confirm the `Document` navigation group now appears for the intended user/role.
+  - If navigation is still hidden for non-admin users, review seeded role permissions for Document object types and navigation paths.
+## 2026-03-13 21:00
+- **Request**: Continue investigating because the `Document` navigation still did not appear even for an admin account.
+- **Context/Constraints**:
+  - The runtime screenshot showed only the default security navigation, which suggests a broader navigation/model issue rather than a simple missing `NavigationItem` attribute.
+  - The fix should avoid requiring manual DB edits from the user.
+- **Actions Taken**:
+  - Added explicit `NavigationItems` nodes to `XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml` so the module now contributes a concrete navigation tree instead of relying only on auto-generated navigation.
+  - Added a shell-level cleanup in `HERP.Module` that removes stale persisted navigation model-difference aspects when they still contain an old navigation tree without the new `Document` module.
+- **Result**: The app now has both an explicit Document navigation definition and a runtime safeguard against stale DB-stored navigation customizations hiding new modules.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml`
+  - `XAF/HERP/HERP.Module/Module.cs`
+- **Open Items**:
+  - Run the app again and confirm the navigation refreshes after login.
+  - If the menu is still stale, inspect the actual `ModelDifferences` rows in the target database and clear them with a targeted migration/maintenance step.
+## 2026-03-13 21:15
+- **Request**: Fix the SQL Server schema error raised at login for admin `admin@habao.com.vn`: `FK_Elements_Videos_VideoId` may cause cycles or multiple cascade paths.
+- **Context/Constraints**:
+  - The issue happened while the app was updating/creating the schema.
+  - The Document module used several cascade deletes from `Video` to nullable child aggregates.
+- **Actions Taken**:
+  - Reviewed the Document EF relationship graph in `DocumentModelBuilder`.
+  - Reduced the direct `Video` child relationships from `Cascade` to `SetNull` for nullable foreign keys (`Element`, `Paragraph`, `ParagraphStyle`, `Media`, `Term`, `ElementBatch`, `TranslateObject`).
+  - Extracted the repeated `Video` mapping block into `ConfigureVideoRelationships` to keep the persistence code easier to read and maintain.
+- **Result**: The Document schema no longer asks SQL Server to create a wide cascade-delete tree rooted at `Video`, which addresses the reported multiple-cascade-path failure.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/Persistence/DocumentModelBuilder.cs`
+- **Open Items**:
+  - Run the app again so EF can recreate/apply the updated schema.
+  - If another FK reports the same SQL Server error, continue narrowing the remaining delete graph with the same approach.
+## 2026-03-13 21:30
+- **Request**: Continue investigating because other business areas appeared, but `Document` still did not.
+- **Context/Constraints**:
+  - The latest runtime state showed `Master Data` but not `Document`, which strongly suggested the problem was now specific to how `Document` itself was being registered into the app.
+  - `Master Data` uses direct `RequiredModuleTypes` wiring, while `Document` had been moved to optional loading during the previous troubleshooting step.
+- **Actions Taken**:
+  - Restored direct shell registration for `HERP.Document`, `HERP.Document.Win`, and `HERP.Document.Blazor` in the shell module constructors.
+  - Removed `Document` from the shared `OptionalModuleLoader` lists so it is no longer dependent on reflective optional module discovery.
+- **Result**: `Document` is now registered through the same fixed module-loading path as the business module that is already visible (`Master Data`), removing the most likely reason it was excluded from the runtime navigation.
+- **Artifacts/Files**:
+  - `XAF/HERP/HERP.Module/Module.cs`
+  - `XAF/HERP/HERP.Win/WinModule.cs`
+  - `XAF/HERP/HERP.Blazor.Server/BlazorModule.cs`
+  - `XAF/HERP/HERP.Module/OptionalModuleLoader.cs`
+- **Open Items**:
+  - Run the app again and verify `Document` now appears beside the other business groups.
+  - If it still does not appear, inspect whether the `HERP.Document` assembly is being built/copied into the startup project's output and whether a persisted navigation model difference is still suppressing the group.
+## 2026-03-13 21:45
+- **Request**: Reduce the `Document` module to a single navigation group and expose only the main business objects based on the legacy module documents.
+- **Context/Constraints**:
+  - The navigation should not list every support entity.
+  - The main objects needed to be chosen from the documented business flows, not from technical implementation convenience.
+- **Actions Taken**:
+  - Re-read the legacy Document module structure/spec and identified the main top-level objects as `Folder`, `Video`, `Dictionary`, `Language`, and `DataService`.
+  - Reworked `HERP.Document/Model.DesignedDiffs.xafml` to a single `Document` navigation group with only those five list views.
+  - Marked support entities as not visible in navigation at the model level and aligned the five main classes to `NavigationItem("Document")`.
+- **Result**: The Document module model now reflects a single top-level business menu with only the main aggregates/configuration masters visible, while secondary processing entities remain accessible through related views instead of the main navigation.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Video.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Folder.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Terminology/Dictionary.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Configuration/Language.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Configuration/DataService.cs`
+- **Open Items**:
+  - Validate at runtime that only the five intended objects appear under the single `Document` navigation group.
+  - If support entities still appear, remove or neutralize the remaining class-level navigation metadata for those secondary types.
+## 2026-03-13 22:00
+- **Request**: Investigate why old navigation entries still appeared and why the chosen main objects for `Document` were not yet accurate.
+- **Context/Constraints**:
+  - The previous model-only changes were not sufficient because XAF could still auto-generate navigation from class-level metadata.
+  - The module should expose only one navigation group with only the true business entry points.
+- **Actions Taken**:
+  - Identified the root cause as remaining class-level `NavigationItem` attributes on many secondary/supporting entities.
+  - Removed `NavigationItem` metadata from the secondary Document entities so XAF can no longer auto-generate menu entries for them.
+  - Simplified the Document model to one `Document` navigation group with only four main objects: `Folder`, `Video`, `Dictionary`, and `DataService`.
+- **Result**: The source metadata now matches the intended UX rule: one module, one navigation group, and only the main business objects at the top level.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/**/*.cs`
+  - `XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml`
+- **Open Items**:
+  - Run the app again to confirm that no secondary Document entities are still being shown from stale model differences.
+  - If any old Document sub-groups remain, clear persisted model differences for the current Win user/context once more.
+
+## 2026-03-13 22:20
+- **Request**: Rename the `Audio` business object to `Element` and update the related code.
+- **Context/Constraints**:
+  - The rename needed to follow the domain meaning, not just a UI caption tweak.
+  - Related services, controllers, relationships, EF mapping, tests, and module exports all needed to stay consistent.
+- **Actions Taken**:
+  - Renamed the core content entity from `Audio` to `Element` and updated its file/class definition.
+  - Renamed `AudioEditingService` to `ElementEditingService` and `AudioEditingController` to `ElementEditingController`.
+  - Updated object graph references across `Video`, `Paragraph`, `ElementBatch`, `ElementTranslate`, `TermLocation`, import/integration/translation/terminology services, tests, module exports, DbContext, and EF model mapping.
+  - Updated the module model metadata so the hidden secondary object entry now references `Element` instead of `Audio`.
+- **Result**: The Document module source now uses `Element` consistently as the primary content unit instead of `Audio`.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Content/Element.cs`
+  - `XAF/Modules/Document/HERP.Document/Services/Workflow/ElementEditingService.cs`
+  - `XAF/Modules/Document/HERP.Document/Controllers/ElementEditingController.cs`
+  - `XAF/Modules/Document/HERP.Document/Persistence/DocumentModelBuilder.cs`
+  - `XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs`
+  - `XAF/Modules/Document/HERP.Document/**/*.cs`
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/**/*.cs`
+- **Open Items**:
+  - Optionally rename the legacy planning/spec documents from `Audio` to `Element` as a documentation follow-up.
+  - Run the app/build again and watch for any remaining compile/runtime references that were hidden behind the current environment limits.
+## 2026-03-13 16:10
+- **Request**: QA the new `Document` module against the legacy spec and old ENTOSDocument code by identifying critical workflows and writing unit/service/business-rule tests.
+- **Context/Constraints**:
+  - Tests should focus on behavior parity for the Document workflows, not only null/basic checks.
+  - Validation in this environment is limited by restore/test infrastructure.
+- **Actions Taken**:
+  - Compared the legacy spec plus old Document services/controllers with the new module implementation.
+  - Added new tests for bookmark import, element split/normalize, folder tree path rebuild, dictionary sync, translate-object HTML import/export, and validation rules.
+  - Expanded workflow/integration tests for lifecycle transitions, ordered batch translation, translation re-application to elements, terminology extraction/location tracking, and end-to-end source-to-export flow.
+  - Tried to run `dotnet test`, but restore failed before compilation because of the current SDK/MSBuild environment.
+- **Result**: The module now has materially broader regression protection around its key legacy workflows, though the suite still needs to be executed in a working restore environment.
+- **Artifacts/Files**:
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/*`
+- **Open Items**:
+  - Execute the Document test suite once restore/build is working.
+  - Add deeper parity tests when real infrastructure adapters replace stubs.
+## 2026-03-13 16:20
+- **Request**: Add a reusable script to run the Document tests.
+- **Context/Constraints**:
+  - Must carry the local `.NET` environment workaround needed by this module's tests.
+- **Actions Taken**:
+  - Added `scripts/run-document-tests.ps1` with restore/test execution and optional `-NoRestore` / `-VerboseRestore` switches.
+- **Result**: Document QA now has a dedicated test runner script instead of requiring manual command entry each time.
+- **Artifacts/Files**:
+  - `scripts/run-document-tests.ps1`
+- **Open Items**:
+  - Execute the script in a healthy restore environment and fix any failing tests.
+## 2026-03-13 16:30
+- **Request**: Fix the missing-version restore error in the Document test project.
+- **Context/Constraints**:
+  - The test project is outside the central package-management subtree.
+- **Actions Taken**:
+  - Added explicit versions for the four test packages to `HERP.Document.Tests.csproj` using the same versions defined in the XAF central package file.
+- **Result**: The Document test runner should now get past the `NU1015` missing-version error.
+- **Artifacts/Files**:
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/HERP.Document.Tests.csproj`
+- **Open Items**:
+  - Run the script again and continue from the next real failure if there is one.
+## 2026-03-13 16:40
+- **Request**: Confirm the Document QA suite runs successfully after the restore fix.
+- **Context/Constraints**:
+  - Previous blocker was the missing-version restore error.
+- **Actions Taken**:
+  - Re-ran the Document test script and observed full xUnit execution.
+- **Result**: The Document module test suite passed `25/25` tests. Build still produced 271 warnings, which remain outside the scope of this task.
+- **Artifacts/Files**:
+  - `tests/XAF/Modules/Document/HERP.Document.Tests/*`
+  - `scripts/run-document-tests.ps1`
+- **Open Items**:
+  - Review warnings and expand parity coverage when real adapters replace current stubs.
+## 2026-03-13 16:54
+- **Request**: Migrate the legacy `ENTOSDocument` object icons from `HERP/Images` into the new `Document` module, following the way HERP currently displays XAF object images and renaming them to match the new object names.
+- **Context/Constraints**:
+  - Reuse the old icon assets instead of drawing a new set.
+  - Keep the image wiring inside `XAF/Modules/Document` and align with XAF `ImageName` / embedded-resource conventions.
+  - The `Audio` legacy icon now needs to represent the renamed `Element` object in the new module.
+- **Actions Taken**:
+  - Reviewed how HERP currently assigns object icons through `[ImageName(...)]` attributes and embedded resources under project `Images` folders.
+  - Renamed Document business object `ImageName` values from generic DevExpress stock icons to module-specific names that match the new business objects.
+  - Added a dedicated `Images` folder under `HERP.Document`, copied the mapped legacy icons from `D:\HERP\Images`, and renamed `Audio.png` to `Element.png` for the new model.
+  - Updated `HERP.Document.csproj` to embed the Document module image assets and assigned explicit `ImageName` values to the top-level Document navigation items in `Model.DesignedDiffs.xafml`.
+  - Tried to validate with `dotnet build --no-restore`, but the local build still exits as failed without surfacing a concrete compile error in this environment.
+- **Result**: The new `Document` module now owns the mapped legacy icon set and references those icons by the new HERP object names, so XAF can resolve consistent custom icons for both object metadata and the main Document navigation nodes.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/Images/*`
+  - `XAF/Modules/Document/HERP.Document/HERP.Document.csproj`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/**/*.cs`
+  - `XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml`
+- **Open Items**:
+  - Run the Win/Blazor app and confirm the custom icons render for the Document navigation and object views.
+  - If any object still falls back to a stock icon, inspect the final embedded resource names in the built assembly.
+## 2026-03-16 09:01
+- **Request**: Resize the `Document` module icons to XAF-style sizes by keeping the base raster icons at `16x16` and generating additional size variants for the module assets.
+- **Context/Constraints**:
+  - The previous task already moved the legacy `ENTOSDocument` icons into the new HERP `Document` module.
+  - The asset set should follow XAF naming conventions for alternate raster sizes instead of keeping only the large source files.
+  - `Folder` currently comes from an SVG source, so it remains vector unless an SVG rasterizer is added later.
+- **Actions Taken**:
+  - Reviewed the current module image set and confirmed the imported PNG sources were still large legacy dimensions.
+  - Added `scripts/sync-document-icons.ps1` to regenerate the Document icon pack directly from `D:\HERP\Images`.
+  - Configured the script to emit base `16x16` PNG files plus `_8x8`, `_12x12`, `_24x24`, `_32x32`, and `_48x48` variants for each mapped Document icon while preserving transparency and aspect ratio.
+  - Re-ran the icon sync so `XAF/Modules/Document/HERP.Document/Images` now contains XAF-sized raster variants for the Document module icons.
+  - Confirmed the generated PNG outputs match the expected pixel dimensions; `Folder.svg` was left as SVG because the current environment has no SVG rasterizer available.
+- **Result**: The `Document` module icon assets now align with XAF-style raster sizing, with `16x16` base icons and the common alternate size variants ready for runtime selection.
+- **Artifacts/Files**:
+  - `scripts/sync-document-icons.ps1`
+  - `XAF/Modules/Document/HERP.Document/Images/*`
+- **Open Items**:
+  - Run the app and confirm XAF picks the intended icon sizes in navigation, actions, and validation surfaces.
+  - If `Folder` needs raster fallbacks too, add an SVG-to-PNG conversion tool and extend the sync script.
+## 2026-03-16 10:35
+- **Request**: Ensure the Video object displays as Video in the XAF model instead of Document.
+- **Context/Constraints**:
+  - Keep the module navigation group as Document while correcting only the Video object captions.
+  - Avoid changing domain behavior or persistence mapping.
+- **Actions Taken**:
+  - Reviewed Model.DesignedDiffs.xafml and found Video still captioned as Document/Documents.
+  - Changed the Video class caption, navigation caption, list view caption, and detail view caption to Video/Videos.
+  - Updated the default draft name in Video.cs from New Document to New Video.
+- **Result**: The module source now labels the main object consistently as Video while keeping the top-level nav group named Document.
+- **Artifacts/Files**:
+  - XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Video.cs
+- **Open Items**:
+  - Validate runtime captions after clearing any persisted model-difference cache.
+
+## 2026-03-16 09:25
+- **Request**: Push the current `Document` module updates to Git.
+- **Context/Constraints**:
+  - The current change set includes caption fixes, expanded tests, icon-sync utilities, generated module icons, and legacy-doc cleanup/rename.
+  - Local `.dotnet-cli` files are test-run cache and should not be committed.
+- **Actions Taken**:
+  - Reviewed the module-related Git changes and checked the new scripts/assets before publishing.
+  - Confirmed `scripts/sync-document-icons.ps1` uses the repository-level `Images` folder as the icon source set.
+  - Added `.dotnet-cli/` to the repository ignore rules so local CLI cache files stay outside the module commit.
+- **Result**: The `Document` module change set is ready for a clean commit/push without local test-run cache artifacts.
+- **Artifacts/Files**:
+  - `.gitignore`
+  - `XAF/Modules/Document/REQUEST_RESULT_LOG.md`
+  - `XAF/Modules/Document/NEXT_STEPS.md`
+  - `scripts/run-document-tests.ps1`
+  - `scripts/sync-document-icons.ps1`
+  - `XAF/Modules/Document/HERP.Document/Images/*`
+- **Open Items**:
+  - Commit and push the current `Document` module updates.
+## 2026-03-16 11:20
+- **Request**: Build a metadata-mapping document from the legacy Document module metadata extract to the current HERP entity model.
+- **Context/Constraints**:
+  - No implementation code; output must be a mapping artifact for a downstream CodeAgent.
+  - Need both direct matches and explicit NOT_FOUND / AMBIGUOUS cases.
+- **Actions Taken**:
+  - Reviewed the legacy ENTITY_UI_METADATA.md.
+  - Inspected the current HERP.Document entities plus related Base, Administration, and MasterData entities used by the module.
+  - Authored docs/old_module/document_module/METADATA_MAPPING.md with entity, field, metadata, default-logic, and warning sections.
+- **Result**: The Document module now has a dedicated metadata mapping reference for translating legacy UI metadata onto the current HERP object model.
+- **Artifacts/Files**:
+  - docs/old_module/document_module/METADATA_MAPPING.md
+  - XAF/Modules/Document/REQUEST_RESULT_LOG.md
+  - XAF/Modules/Document/NEXT_STEPS.md
+- **Open Items**:
+  - Confirm ambiguous mappings such as Audio -> Element, Product -> MasterData.Product, and setting-related Parameter handling before batch-applying metadata.
+## 2026-03-16 17:35
+- **Request**: Find the cause of the missing Document navigation at runtime.
+- **Context/Constraints**:
+  - Diagnose the actual runtime loading path before touching the Document XAF model again.
+  - Preserve the existing optional-module composition pattern used by the HERP shell.
+- **Actions Taken**:
+  - Traced startup composition in Win, Blazor, and WebApi and verified those shells call OptionalModuleLoader for business modules.
+  - Confirmed HERP.Document was absent from OptionalModuleLoader, and the shell csproj files also lacked Document project references.
+  - Added Document core/win/blazor to OptionalModuleLoader and added the matching project references to HERP.Module, HERP.Win, and HERP.Blazor.Server.
+  - Added the Document projects into XAF/HERP.slnx to keep the solution profile aligned with the module layout.
+- **Result**: The Document navigation was missing because the module itself was not being loaded into the app runtime, even though its XAF model already contained navigation nodes.
+- **Artifacts/Files**:
+  - XAF/HERP/HERP.Module/HERP.Module.csproj
+  - XAF/HERP/HERP.Win/HERP.Win.csproj
+  - XAF/HERP/HERP.Blazor.Server/HERP.Blazor.Server.csproj
+  - XAF/HERP/HERP.Module/OptionalModuleLoader.cs
+  - XAF/HERP.slnx
+- **Open Items**:
+  - Run the shell and verify that the Document group now appears.
+  - If runtime still hides it, inspect persisted model-difference cache next rather than changing BO navigation attributes again.
+## 2026-03-16 18:05
+- **Request**: Continue the missing-Document-navigation investigation after fixing module loading.
+- **Context/Constraints**:
+  - Confirm whether the problem has moved from module composition to persistence/type registration.
+  - Avoid changing the Document XAF model again until runtime wiring is complete.
+- **Actions Taken**:
+  - Verified the Win shell output now contains HERP.Document.dll and HERP.Document.Win.dll.
+  - Found that HERPDbContext still lacked all Document DbSet<> registrations and did not call DocumentModelBuilder.Configure(...).
+  - Added the Document entity DbSet<> registrations and wired DocumentModelBuilder into HERPDbContext.OnModelCreating(...).
+- **Result**: The Document module is now wired into both runtime module composition and EF/XAF persistence registration, eliminating the two biggest structural reasons its navigation would not appear.
+- **Artifacts/Files**:
+  - XAF/HERP/HERP.Module/BusinessObjects/HERPDbContext.cs
+  - XAF/HERP/HERP.Win/bin/Debug/net10.0-windows/HERP.Document.dll
+  - XAF/HERP/HERP.Win/bin/Debug/net10.0-windows/HERP.Document.Win.dll
+- **Open Items**:
+  - Re-run the shell and confirm whether the Document group now appears.
+  - If it still does not, inspect ModelDifference / ModelDifferenceAspect rows for the active Win user/context next.
+
+## 2026-03-16 18:25
+- **Request**: Keep tracing the missing Document navigation after module registration and HERPDbContext wiring were restored.
+- **Context/Constraints**:
+  - The module model already defines a single Document navigation group with the intended entry objects.
+  - The Win shell persists user-level model differences in the database, which can override module navigation.
+- **Actions Taken**:
+  - Re-checked the module XAF model and confirmed the Document nav node is still present at source level.
+  - Verified the Win shell creates a ModelDifferenceDbStore for the Win context.
+  - Patched HERP.Win.WinModule so that after logon it removes stale Win user model-difference records whose navigation XML still lacks the Document node, allowing XAF to rebuild the navigation from current module sources.
+- **Result**: The investigation now covers the runtime cache layer as well: stale user model differences are no longer allowed to keep hiding the Document group after the module itself has been correctly registered and wired.
+- **Artifacts/Files**:
+  - XAF/HERP/HERP.Win/WinModule.cs
+  - XAF/Modules/Document/HERP.Document/Model.DesignedDiffs.xafml
+- **Open Items**:
+  - Restart the Win shell and confirm the Document group now appears.
+  - If the group is still missing, inspect the actual ModelDifference rows in the HERP_Service database from a machine/session that can access LocalDB.
+
+## 2026-03-16 18:40
+- **Request**: Fix the runtime exception thrown by the stale-Document-navigation cache cleanup.
+- **Context/Constraints**:
+  - The previous cleanup queried ModelDifferenceAspect.Xml using string.Contains(..., StringComparison.OrdinalIgnoreCase) inside an EF LINQ query.
+  - SQL Server provider cannot translate that overload, and the app failed during logon before the navigation could refresh.
+- **Actions Taken**:
+  - Changed the cleanup flow in HERP.Win.WinModule to load only the current user's Win model-difference candidates from the database first.
+  - Moved the XML Contains(..., StringComparison.OrdinalIgnoreCase) checks to in-memory filtering after ToList().
+- **Result**: The cache cleanup no longer depends on unsupported SQL translation, so logon should proceed normally while still purging stale user model differences that hide Document.
+- **Artifacts/Files**:
+  - XAF/HERP/HERP.Win/WinModule.cs
+- **Open Items**:
+  - Re-run the Win shell and verify that login succeeds and the Document navigation appears.
+
+## 2026-03-16 19:00
+- **Request**: Focus only on making the Document navigation appear in the application.
+- **Context/Constraints**:
+  - Auto-generated module navigation has still not surfaced reliably even after module loading, persistence wiring, and stale user-model cleanup fixes.
+  - The safest next step is to define the Document node at the shell application-model level that is guaranteed to load.
+- **Actions Taken**:
+  - Added an explicit Document navigation group with Folder_ListView, Video_ListView, Dictionary_ListView, and DataService_ListView directly to the shell model.
+- **Result**: The application-level model now owns the Document navigation definition, so the shell has a direct navigation source for the module instead of depending only on module-level auto-generated navigation.
+- **Artifacts/Files**:
+  - XAF/HERP/HERP.Module/Model.DesignedDiffs.xafml
+- **Open Items**:
+  - Restart the Win shell and verify that the Document group now appears in the navigation.
+  - If it still does not, inspect why the shell model itself is being overridden at runtime.
+
+## 2026-03-16 19:15
+- **Request**: Keep focusing only on making the Document navigation appear.
+- **Context/Constraints**:
+  - The runtime still did not show Document, even after model-level navigation definitions were added.
+  - This suggests the remaining weak point is module registration itself rather than BO metadata.
+- **Actions Taken**:
+  - Removed Document from OptionalModuleLoader so it no longer depends on optional reflective registration.
+  - Registered HERPDocumentModule and platform modules explicitly in Win/Blazor/WebApi startup builders, alongside the shell modules.
+- **Result**: Document now follows the same fixed module-registration pattern as the shell?s always-on modules instead of relying on optional loading at runtime.
+- **Artifacts/Files**:
+  - XAF/HERP/HERP.Module/OptionalModuleLoader.cs
+  - XAF/HERP/HERP.Win/Startup.cs
+  - XAF/HERP/HERP.Blazor.Server/Startup.cs
+  - XAF/HERP/HERP.WebApi/Startup.cs
+- **Open Items**:
+  - Restart the Win shell and verify that the Document navigation now appears.
+  - If it still does not, inspect whether shell/user model overrides are removing the application-level Document node at runtime.
+
+## 2026-03-16 19:30
+- **Request**: Remove the extra Document business objects that still appear under the Default navigation group.
+- **Context/Constraints**:
+  - The Document group is now visible, but XAF is still auto-generating navigation items for the module?s BO classes.
+  - The fix must target navigation display only.
+- **Actions Taken**:
+  - Added application-model overrides for all HERP.Document.BusinessObjects.* classes with IsVisibleInNavigation="False".
+  - Kept the explicit Document navigation group intact in the shell model so only the intended menu remains visible.
+- **Result**: The shell model now suppresses auto-generated Document BO navigation entries under Default, leaving navigation ownership to the explicit Document group only.
+- **Artifacts/Files**:
+  - XAF/HERP/HERP.Module/Model.DesignedDiffs.xafml
+- **Open Items**:
+  - Re-run the Win shell and verify the Default group no longer shows Document business objects.
+
+## 2026-03-17 08:57
+- **Request**: Remove legacy business modules from the shell definition files and put `Document` back on the optional module path so it can show up in the UI without forcing mandatory registration yet.
+- **Context/Constraints**:
+  - Keep this pass focused on shell/module-definition wiring only.
+  - Do not change `Document` business logic, persistence, or runtime model content in this step.
+  - If optional loading still fails later, a mandatory-shell fallback can be considered separately.
+- **Actions Taken**:
+  - Added `HERP.Document`, `HERP.Document.Win`, and `HERP.Document.Blazor` back into `OptionalModuleLoader`.
+  - Removed the obsolete legacy feature-module entries from the same loader lists so the optional path now reflects the modules that actually exist in the repo.
+  - Added `Document` project references to the shell projects and switched the Win, Blazor, and WebApi startups back to the shared optional-loader registration flow.
+- **Result**:
+  - `Document` is once again discoverable through the shared optional module mechanism across the application shells.
+  - The shell-definition layer no longer carries stale definitions for legacy modules that are absent from the current repository tree.
+- **Artifacts/Files**:
+  - `XAF/HERP/HERP.Module/OptionalModuleLoader.cs`
+  - `XAF/HERP/HERP.Module/HERP.Module.csproj`
+  - `XAF/HERP/HERP.Win/HERP.Win.csproj`
+  - `XAF/HERP/HERP.Blazor.Server/HERP.Blazor.Server.csproj`
+  - `XAF/HERP/HERP.Win/Startup.cs`
+  - `XAF/HERP/HERP.Blazor.Server/Startup.cs`
+  - `XAF/HERP/HERP.WebApi/Startup.cs`
+  - `XAF/Modules/Document/REQUEST_RESULT_LOG.md`
+  - `XAF/Modules/Document/NEXT_STEPS.md`
+- **Open Items**:
+  - Launch the Win shell and confirm the `Document` navigation still appears through optional loading.
+  - If the module disappears again, compare optional loading versus mandatory shell registration and choose the more stable pattern.
+
+## 2026-03-17 09:05
+- **Request**: Investigate the compile errors claiming HERP.Base.HERPBaseModule and HERP.MasterData.HERPMasterDataModule do not exist.
+- **Context/Constraints**:
+  - Keep the diagnosis focused on the Document module compile failure.
+  - Determine whether the problem is missing references or stale renamed type names.
+- **Actions Taken**:
+  - Searched for the missing identifiers and confirmed the live code usage was in HERP.Document/Module.cs.
+  - Verified the current module class names in the dependency modules are HERP.Base.BaseModule and HERP.MasterData.MasterDataModule.
+  - Updated HERPDocumentModule.RequiredModuleTypes to point at the renamed module classes.
+- **Result**:
+  - The compile error came from stale pre-rename module class names, not from missing ProjectReference entries.
+  - The Document module dependency declaration now matches the current Base and MasterData module exports.
+- **Artifacts/Files**:
+  - XAF/Modules/Document/HERP.Document/Module.cs
+  - XAF/Modules/Document/REQUEST_RESULT_LOG.md
+  - XAF/Modules/Document/NEXT_STEPS.md
+- **Open Items**:
+  - Rebuild the Document module and watch for any other leftover pre-rename type names in downstream modules.
+
+## 2026-03-17 10:05
+- **Request**: Move Document from optional module loading to mandatory shell registration temporarily for development.
+- **Context/Constraints**:
+  - Favor runtime determinism over architectural purity for the moment.
+  - Keep the change limited to shell/module-definition wiring.
+- **Actions Taken**:
+  - Removed Document from the optional module loader lists.
+  - Added direct HERP.Document registrations to Win, Blazor, and WebApi startup module composition.
+- **Result**:
+  - Document is now wired as a mandatory module in the current app shells for dev use.
+- **Artifacts/Files**:
+  - XAF/HERP/HERP.Module/OptionalModuleLoader.cs
+  - XAF/HERP/HERP.Win/Startup.cs
+  - XAF/HERP/HERP.Blazor.Server/Startup.cs
+  - XAF/HERP/HERP.WebApi/Startup.cs
+- **Open Items**:
+  - Confirm runtime navigation and startup behavior with the mandatory registration path.
+  - Decide later whether the module can safely move back to optional loading.
+
+## 2026-03-17 10:40
+- **Request**: Add the immediate Document-only improvements that can be implemented without touching shared layers or files outside the module.
+- **Context/Constraints**:
+  - Only modify files inside `XAF/Modules/Document`.
+  - Focus on safe module-local improvements rather than shared architecture changes.
+- **Actions Taken**:
+  - Added stronger module-local validation for Folder parent/self-cycle checks and Element start/end time ordering.
+  - Added computed summary properties to Folder, Video, and Element for path/count/duration/translation visibility.
+  - Extended FolderService with recursive path rebuilding and exposed a new `Rebuild Path Tree` XAF action.
+  - Added a new `Resequence Elements` XAF action for Video and a service method to normalize element sequence ordering.
+  - Updated the Document module continuity backlog with follow-up validation items for the new actions and summary fields.
+- **Result**:
+  - The Document module now protects against invalid folder hierarchies and invalid element time ranges without any shared-layer changes.
+  - Users also get two new module-local maintenance actions and several lightweight summary fields inside the module itself.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/Validation/DocumentValidationMessages.cs`
+  - `XAF/Modules/Document/HERP.Document/Messages/DocumentMessageKeys.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Folder.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Video.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Content/Element.cs`
+  - `XAF/Modules/Document/HERP.Document/Services/Workflow/FolderService.cs`
+  - `XAF/Modules/Document/HERP.Document/Services/Workflow/ElementEditingService.cs`
+  - `XAF/Modules/Document/HERP.Document/Controllers/FolderController.cs`
+  - `XAF/Modules/Document/HERP.Document/Controllers/VideoMaintenanceController.cs`
+  - `XAF/Modules/Document/REQUEST_RESULT_LOG.md`
+  - `XAF/Modules/Document/NEXT_STEPS.md`
+- **Open Items**:
+  - Validate the two new XAF actions in runtime.
+  - Decide whether any of the new summary fields need view-level ordering or hiding in the module model later.
+
+## 2026-03-17 11:05
+- **Request**: Fix inconsistent line endings in the Document-module files edited in the previous task.
+- **Context/Constraints**:
+  - Only touch files inside XAF/Modules/Document.
+  - Keep the change limited to line-ending normalization for the files edited in the module task.
+- **Actions Taken**:
+  - Normalized the edited Document module files to Windows CRLF line endings.
+  - Kept the change limited to the files touched in the previous module-only improvement pass.
+- **Result**:
+  - The edited Document module files now use consistent Windows line endings, which should stop the Visual Studio inconsistent-line-endings prompt for those files.
+- **Artifacts/Files**:
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Folder.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Video.cs
+  - XAF/Modules/Document/HERP.Document/BusinessObjects/Content/Element.cs
+  - XAF/Modules/Document/HERP.Document/Controllers/FolderController.cs
+  - XAF/Modules/Document/HERP.Document/Controllers/VideoMaintenanceController.cs
+  - XAF/Modules/Document/HERP.Document/Services/Workflow/FolderService.cs
+  - XAF/Modules/Document/HERP.Document/Services/Workflow/ElementEditingService.cs
+  - XAF/Modules/Document/HERP.Document/Validation/DocumentValidationMessages.cs
+  - XAF/Modules/Document/HERP.Document/Messages/DocumentMessageKeys.cs
+  - XAF/Modules/Document/NEXT_STEPS.md
+  - XAF/Modules/Document/REQUEST_RESULT_LOG.md
+- **Open Items**:
+  - If Visual Studio still reports mixed endings on other Document files, normalize those files in a separate focused pass.
+## 2026-03-17 12:05
+- **Request**: Tighten validation inside the `Document` module only, while keeping the additions framework-agnostic and limited to module-local code.
+- **Context/Constraints**:
+  - Do not modify files outside `XAF/Modules/Document`.
+  - Prioritize business validation over XAF-specific actions or presentation metadata.
+- **Actions Taken**:
+  - Added new validation keys and helper guards for bookmark import-state consistency, unique data-service parameter codes, required element-batch references, and source/target language consistency.
+  - Tightened `Video`, `BookMark`, `DataService`, `ElementBatch`, and `BatchTranslate` validations with the new guards.
+- **Result**: The Document module now rejects more inconsistent business data without adding new shared-layer or framework-specific dependencies.
+- **Artifacts/Files**:
+  - `XAF/Modules/Document/HERP.Document/Messages/DocumentMessageKeys.cs`
+  - `XAF/Modules/Document/HERP.Document/Validation/DocumentValidationMessages.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Core/Video.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Integration/BookMark.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Configuration/DataService.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Translation/ElementBatch.cs`
+  - `XAF/Modules/Document/HERP.Document/BusinessObjects/Translation/BatchTranslate.cs`
+- **Open Items**:
+  - Validate the new rules against real Document data in runtime screens.
+  - Decide later whether to add deeper cross-entity duplicate checks that would require repository/query support.
+## 2026-03-26 15:20
+- **Request**: Re-publish `HERP-Doc` so the repository is scoped only to the standalone `Document` module folder.
+- **Context/Constraints**:
+  - Treat `D:\HERP\XAF\Modules\Document` as the repository root for `HERP-Doc`.
+  - Do not rewrite or otherwise alter the parent repository at `D:\HERP`.
+- **Actions Taken**:
+  - Prepared the module folder for standalone Git initialization and remote publishing.
+  - Captured the repo-boundary decision in the local continuity files before the Git re-bootstrap and push.
+- **Result**:
+  - The Document module now has an explicit continuity record that `HERP-Doc` is intended to track only this folder.
+- **Artifacts/Files**:
+  - `REQUEST_RESULT_LOG.md`
+  - `NEXT_STEPS.md`
+  - `.gitignore`
+- **Open Items**:
+  - Initialize Git metadata in this folder if `.git` is absent.
+  - Set `origin` to `https://github.com/NamHabaoGit/HERP-Doc.git` and publish the standalone branch.
